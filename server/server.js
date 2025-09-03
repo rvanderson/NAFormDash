@@ -28,6 +28,7 @@ if (process.env.OPENAI_API_KEY) {
 }
 
 // Middleware
+// Allow requests from any origin in development (Vite proxy will handle requests)
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
@@ -313,11 +314,19 @@ Generate a complete SurveyJS form definition that captures all the necessary inf
       .replace(/-+/g, '-') // Replace multiple hyphens with single
       .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
 
+    // Create a URL slug (similar to formId but potentially different)
+    const urlSlug = name.toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/-+/g, '-') // Replace multiple hyphens with single
+      .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+
     // Create form configuration
     const formConfig = {
       id: formId,
       name: name,
       description: description,
+      urlSlug: urlSlug,
       webhookUrl: webhookUrl || null,
       createdAt: new Date().toISOString(),
       generatedBy: 'GPT-4o',
@@ -329,24 +338,18 @@ Generate a complete SurveyJS form definition that captures all the necessary inf
       }
     };
 
-    // Save to generated-forms directory (for backup/reference)
-    const formsDir = path.join(__dirname, 'generated-forms');
+    // Save to the consolidated forms directory
+    const formsDir = path.join(__dirname, 'forms');
     await ensureDirectory(formsDir);
     await fs.writeFile(
       path.join(formsDir, `${formId}.json`),
       JSON.stringify(formConfig, null, 2)
     );
 
-    // Also create the submission structure in submissions directory
+    // Create the submission directory structure
     const submissionsDir = path.join(__dirname, 'submissions');
     const formSubmissionDir = path.join(submissionsDir, formId);
     await ensureDirectory(formSubmissionDir);
-    
-    // Save config.json in submissions directory (for API discovery)
-    await fs.writeFile(
-      path.join(formSubmissionDir, 'config.json'),
-      JSON.stringify(formConfig, null, 2)
-    );
 
     // Create basic CSV structure file (empty, ready for submissions)
     const csvHeaders = ['Submission ID', 'Timestamp', 'Full Name', 'Email'];
@@ -425,7 +428,6 @@ app.post('/api/forms/:formId/submit', upload.any(), async (req, res) => {
     // Generate documentation files
     await Promise.all([
       generateFormDocs(formId, formData, submissionData),
-      generateFormJSON(formId, formData),
       updateCSV(formId, submissionData)
     ]);
     
@@ -494,31 +496,32 @@ app.get('/api/health', (req, res) => {
 // Get all forms and their submission counts
 app.get('/api/forms', async (req, res) => {
   try {
+    const formsDir = path.join(__dirname, 'forms');
     const submissionsDir = path.join(__dirname, 'submissions');
-    
+
     try {
-      const formDirs = await fs.readdir(submissionsDir);
+      const formFiles = await fs.readdir(formsDir);
       const forms = await Promise.all(
-        formDirs.filter(dir => !dir.startsWith('.')) // Filter out .DS_Store and other hidden files
-          .map(async (formId) => {
+        formFiles
+          .filter(file => file.endsWith('.json'))
+          .map(async (file) => {
             try {
-              // Read form configuration
-              const configPath = path.join(submissionsDir, formId, 'config.json');
-              const configContent = await fs.readFile(configPath, 'utf-8');
-              const config = JSON.parse(configContent);
-              
-              // Count submissions
-              const csvPath = path.join(submissionsDir, formId, 'responses.csv');
+              // Read form configuration from the single source of truth
+              const formPath = path.join(formsDir, file);
+              const formContent = await fs.readFile(formPath, 'utf-8');
+              const config = JSON.parse(formContent);
+
+              // Count submissions from the submissions directory
+              const csvPath = path.join(submissionsDir, config.id, 'responses.csv');
               let submissionCount = 0;
-              
               try {
                 const csvContent = await fs.readFile(csvPath, 'utf-8');
                 const lines = csvContent.split('\n').filter(line => line.trim());
                 submissionCount = Math.max(0, lines.length - 1);
               } catch (error) {
-                submissionCount = 0;
+                submissionCount = 0; // No submissions file found
               }
-              
+
               return {
                 id: config.id,
                 name: config.name,
@@ -527,19 +530,19 @@ app.get('/api/forms', async (req, res) => {
                 generatedBy: config.generatedBy,
                 webhookUrl: config.webhookUrl,
                 submissionCount,
-                path: path.join(submissionsDir, formId)
+                settings: config.settings
               };
             } catch (error) {
-              // Skip forms without valid config files
-              return null;
+              console.error(`Error processing form file ${file}:`, error);
+              return null; // Skip invalid form files
             }
           })
       );
-      
-      // Filter out null results and return
+
       const validForms = forms.filter(form => form !== null);
-      res.json({ success: true, forms: validForms });
+      res.json({ success: true, forms: validForms.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) });
     } catch (error) {
+      // This error occurs if the 'forms' directory doesn't exist
       res.json({ success: true, forms: [] });
     }
   } catch (error) {
@@ -550,11 +553,11 @@ app.get('/api/forms', async (req, res) => {
   }
 });
 
-// Get generated form by ID
+// Get form definition by ID
 app.get('/api/forms/:formId/definition', async (req, res) => {
   try {
     const { formId } = req.params;
-    const formsDir = path.join(__dirname, 'generated-forms');
+    const formsDir = path.join(__dirname, 'forms'); // Use the new consolidated directory
     const formPath = path.join(formsDir, `${formId}.json`);
     
     try {
@@ -580,55 +583,55 @@ app.get('/api/forms/:formId/definition', async (req, res) => {
   }
 });
 
-// List all generated forms
-app.get('/api/forms/generated', async (req, res) => {
+// Get form definition by URL slug (for public forms)
+app.get('/api/forms/slug/:slug', async (req, res) => {
   try {
-    const formsDir = path.join(__dirname, 'generated-forms');
+    const { slug } = req.params;
+    const formsDir = path.join(__dirname, 'forms');
     
+    // Read all form files to find matching slug
     try {
-      const formFiles = await fs.readdir(formsDir);
-      const forms = await Promise.all(
-        formFiles
-          .filter(file => file.endsWith('.json'))
-          .map(async (file) => {
-            const formPath = path.join(formsDir, file);
-            const content = await fs.readFile(formPath, 'utf-8');
-            const config = JSON.parse(content);
-            
-            // Get submission count
-            const submissionsDir = path.join(__dirname, 'submissions', config.id);
-            const csvPath = path.join(submissionsDir, 'responses.csv');
-            let submissionCount = 0;
-            
-            try {
-              const csvContent = await fs.readFile(csvPath, 'utf-8');
-              const lines = csvContent.split('\n').filter(line => line.trim());
-              submissionCount = Math.max(0, lines.length - 1);
-            } catch (error) {
-              submissionCount = 0;
-            }
-            
-            return {
-              id: config.id,
-              name: config.name,
-              description: config.description,
-              createdAt: config.createdAt,
-              generatedBy: config.generatedBy,
-              submissionCount: submissionCount,
-              webhookUrl: config.webhookUrl,
-              settings: config.settings
-            };
-          })
-      );
+      const files = await fs.readdir(formsDir);
+      const jsonFiles = files.filter(file => file.endsWith('.json'));
+      
+      let matchingForm = null;
+      
+      for (const file of jsonFiles) {
+        const formPath = path.join(formsDir, file);
+        const formConfigContent = await fs.readFile(formPath, 'utf-8');
+        const formConfig = JSON.parse(formConfigContent);
+        
+        if (formConfig.urlSlug === slug) {
+          matchingForm = formConfig;
+          break;
+        }
+      }
+      
+      if (!matchingForm) {
+        return res.status(404).json({
+          success: false,
+          error: 'Form not found'
+        });
+      }
+      
+      // Check if form is public
+      if (!matchingForm.isPublic) {
+        return res.status(403).json({
+          success: false,
+          error: 'Form is not publicly accessible'
+        });
+      }
       
       res.json({
         success: true,
-        forms: forms.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        formConfig: matchingForm,
+        formDefinition: matchingForm.formDefinition
       });
+      
     } catch (error) {
-      res.json({
-        success: true,
-        forms: []
+      res.status(500).json({
+        success: false,
+        error: 'Error reading forms directory'
       });
     }
   } catch (error) {
@@ -638,6 +641,7 @@ app.get('/api/forms/generated', async (req, res) => {
     });
   }
 });
+
 
 // Webhook test endpoint
 app.post('/api/webhook/test', async (req, res) => {

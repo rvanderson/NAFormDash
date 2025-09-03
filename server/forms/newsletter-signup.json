@@ -1,0 +1,53 @@
+{
+  "id": "newsletter-signup",
+  "name": "Newsletter Signup",
+  "description": "Simple newsletter subscription form",
+  "webhookUrl": null,
+  "createdAt": "2025-09-03T14:44:54.550Z",
+  "generatedBy": "GPT-4o",
+  "generation_comment": "This form was originally auto-generated and has been consolidated into the /server/forms directory.",
+  "formDefinition": {
+    "title": "Newsletter Signup",
+    "description": "Stay updated with our latest news and updates by subscribing to our newsletter.",
+    "checkErrorsMode": "onComplete",
+    "pages": [
+      {
+        "name": "subscriptionDetails",
+        "title": "Subscription Details",
+        "elements": [
+          {
+            "type": "text",
+            "name": "fullName",
+            "title": "Full Name",
+            "isRequired": true,
+            "placeholder": "Enter your full name"
+          },
+          {
+            "type": "email",
+            "name": "emailAddress",
+            "title": "Email Address",
+            "isRequired": true,
+            "placeholder": "Enter your email address"
+          },
+          {
+            "type": "boolean",
+            "name": "consent",
+            "title": "Do you agree to receive emails from us?",
+            "isRequired": true,
+            "labelTrue": "Yes",
+            "labelFalse": "No"
+          }
+        ]
+      }
+    ],
+    "showProgressBar": "top",
+    "progressBarType": "buttons",
+    "showQuestionNumbers": "off",
+    "completeText": "Subscribe Now"
+  },
+  "settings": {
+    "enableWebhook": false,
+    "enableFileUploads": true,
+    "enableCSVExport": true
+  }
+}

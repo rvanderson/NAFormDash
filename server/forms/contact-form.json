@@ -1,0 +1,54 @@
+{
+  "id": "contact-form",
+  "name": "Contact form",
+  "description": "Just a basic contact form. Should include Name, email, message and nothing else.",
+  "urlSlug": "contact-us",
+  "isPublic": false,
+  "webhookUrl": "https://n8n.ryananderson.ca/webhook-test/f008e33c-17ed-438a-9d9d-d8e8f2db37ab",
+  "createdAt": "2025-09-03T14:38:31.326Z",
+  "generatedBy": "GPT-5",
+  "generation_comment": "This form was originally auto-generated and has been consolidated into the /server/forms directory.",
+  "formDefinition": {
+    "title": "Contact Form",
+    "description": "Please fill in the form below to get in touch with us.",
+    "checkErrorsMode": "onComplete",
+    "pages": [
+      {
+        "name": "contactPage",
+        "title": "Contact Information",
+        "elements": [
+          {
+            "type": "text",
+            "name": "fullName",
+            "title": "Full Name",
+            "isRequired": true,
+            "placeholder": "Enter your full name"
+          },
+          {
+            "type": "email",
+            "name": "emailAddress",
+            "title": "Email Address",
+            "isRequired": true,
+            "placeholder": "Enter your email address"
+          },
+          {
+            "type": "comment",
+            "name": "messageContent",
+            "title": "Message",
+            "isRequired": true,
+            "placeholder": "Type your message here"
+          }
+        ]
+      }
+    ],
+    "showProgressBar": "top",
+    "progressBarType": "buttons",
+    "showQuestionNumbers": "off",
+    "completeText": "Submit Form"
+  },
+  "settings": {
+    "enableWebhook": true,
+    "enableFileUploads": true,
+    "enableCSVExport": true
+  }
+}

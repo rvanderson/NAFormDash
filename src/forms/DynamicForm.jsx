@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Model } from 'survey-core';
 import { Survey } from 'survey-react-ui';
+import { FlatLight } from 'survey-core/themes';
 import { FormSubmissionService } from '../services/formSubmissionService.js';
 
 const DynamicForm = () => {
@@ -25,7 +26,7 @@ const DynamicForm = () => {
         setApiHealthy(healthy);
 
         // Fetch form definition
-        const response = await fetch(`http://localhost:3001/api/forms/${formId}/definition`);
+        const response = await fetch(`/api/forms/${formId}/definition`);
         
         if (!response.ok) {
           if (response.status === 404) {
@@ -45,27 +46,20 @@ const DynamicForm = () => {
         // Create Survey model
         const surveyModel = new Model(result.formDefinition);
         
-        // Apply our design theme
+        // Apply SurveyJS flat-light theme with Inter font and brand colors
         surveyModel.applyTheme({
-          "cssVariables": {
-            "--sjs-general-backcolor": "oklch(1.0 0 0)",
-            "--sjs-general-backcolor-dark": "oklch(0.975 0.01 240)", 
-            "--sjs-general-backcolor-dim": "oklch(0.99 0.005 240)",
-            "--sjs-general-forecolor": "rgba(17, 24, 39, 1)",
-            "--sjs-general-forecolor-light": "rgba(107, 114, 128, 1)",
-            "--sjs-general-dim-forecolor": "rgba(156, 163, 175, 1)",
-            "--sjs-primary-backcolor": "oklch(0.35 0.12 240)",
-            "--sjs-primary-forecolor": "rgba(255, 255, 255, 1)",
-            "--sjs-base-unit": "8px",
-            "--sjs-corner-radius": "12px",
-            "--sjs-secondary-backcolor": "oklch(1.0 0 0)",
-            "--sjs-secondary-backcolor-light": "oklch(0.99 0.005 240)",
-            "--sjs-secondary-backcolor-semi-light": "oklch(0.975 0.01 240)",
-            "--sjs-secondary-forecolor": "rgba(17, 24, 39, 1)",
-            "--sjs-shadow-small": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
-            "--sjs-shadow-medium": "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
-            "--sjs-border-default": "oklch(0.9 0.015 240)",
-            "--sjs-border-light": "oklch(0.95 0.01 240)"
+          ...FlatLight,
+          cssVariables: {
+            ...FlatLight.cssVariables,
+            // Fix font - SurveyJS uses these variables
+            "--sjs-font-family": "Inter, system-ui, sans-serif",
+            "--font-family": "Inter, system-ui, sans-serif",
+            "--sjs-general-font-family": "Inter, system-ui, sans-serif",
+            // Override green with brand blue
+            "--sjs-primary-backcolor": "oklch(0.35 0.12 240)", // brand-600
+            "--sjs-primary-backcolor-light": "oklch(0.45 0.1 240)", // brand-500  
+            "--sjs-primary-backcolor-dark": "oklch(0.25 0.14 240)", // brand-700
+            "--sjs-primary-forecolor": "white"
           }
         });
 

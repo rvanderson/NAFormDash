@@ -1,0 +1,132 @@
+{
+  "id": "customer-feedback-survey",
+  "name": "Customer Feedback Survey",
+  "description": "A survey to collect customer feedback about our products and services",
+  "webhookUrl": "https://n8n.ryananderson.ca/webhook-test/f008e33c-17ed-438a-9d9d-d8e8f2db37ab",
+  "createdAt": "2025-09-03T14:45:40.228Z",
+  "generatedBy": "GPT-4o",
+  "generation_comment": "This form was originally auto-generated and has been consolidated into the /server/forms directory.",
+  "formDefinition": {
+    "title": "Customer Feedback Survey",
+    "description": "We value your feedback and would love to hear your thoughts on our products and services. Please take a few moments to complete this survey.",
+    "checkErrorsMode": "onNext",
+    "pages": [
+      {
+        "name": "page1",
+        "title": "Personal Information",
+        "elements": [
+          {
+            "type": "text",
+            "name": "customerName",
+            "title": "What is your name?",
+            "isRequired": true,
+            "placeholder": "Enter your full name"
+          },
+          {
+            "type": "email",
+            "name": "customerEmail",
+            "title": "What is your email address?",
+            "isRequired": true,
+            "placeholder": "Enter your email address"
+          }
+        ]
+      },
+      {
+        "name": "page2",
+        "title": "Product Feedback",
+        "elements": [
+          {
+            "type": "checkbox",
+            "name": "productsUsed",
+            "title": "Which of our products have you used?",
+            "isRequired": true,
+            "choices": [
+              "Product A",
+              "Product B",
+              "Product C",
+              "Product D",
+              "Other"
+            ]
+          },
+          {
+            "type": "rating",
+            "name": "productSatisfaction",
+            "title": "How satisfied are you with our products?",
+            "isRequired": true,
+            "rateValues": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "minRateDescription": "Very Unsatisfied",
+            "maxRateDescription": "Very Satisfied"
+          },
+          {
+            "type": "comment",
+            "name": "productImprovements",
+            "title": "What improvements would you suggest for our products?",
+            "placeholder": "Enter your suggestions here"
+          }
+        ]
+      },
+      {
+        "name": "page3",
+        "title": "Service Feedback",
+        "elements": [
+          {
+            "type": "rating",
+            "name": "serviceSatisfaction",
+            "title": "How satisfied are you with our customer service?",
+            "isRequired": true,
+            "rateValues": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "minRateDescription": "Very Unsatisfied",
+            "maxRateDescription": "Very Satisfied"
+          },
+          {
+            "type": "comment",
+            "name": "serviceExperience",
+            "title": "Please describe your experience with our customer service.",
+            "placeholder": "Enter your experience here"
+          }
+        ]
+      },
+      {
+        "name": "page4",
+        "title": "Additional Feedback",
+        "elements": [
+          {
+            "type": "comment",
+            "name": "additionalComments",
+            "title": "Do you have any additional comments or suggestions?",
+            "placeholder": "Enter any additional feedback here"
+          },
+          {
+            "type": "boolean",
+            "name": "recommendation",
+            "title": "Would you recommend our products and services to others?",
+            "labelTrue": "Yes",
+            "labelFalse": "No",
+            "isRequired": true
+          }
+        ]
+      }
+    ],
+    "showProgressBar": "top",
+    "progressBarType": "buttons",
+    "showQuestionNumbers": "off",
+    "completeText": "Submit Form"
+  },
+  "settings": {
+    "enableWebhook": true,
+    "enableFileUploads": true,
+    "enableCSVExport": true
+  }
+}

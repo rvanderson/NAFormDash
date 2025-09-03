@@ -1,0 +1,83 @@
+{
+  "id": "test-form",
+  "name": "Test form",
+  "description": "Create a form with dropdowns to pick yes or no, This is just for testing it doesn't matter what it says",
+  "urlSlug": "test-survey",
+  "isPublic": false,
+  "webhookUrl": null,
+  "createdAt": "2025-09-03T17:51:11.131Z",
+  "generatedBy": "GPT-4o",
+  "formDefinition": {
+    "title": "Test Form",
+    "description": "This form is for testing purposes. It includes dropdowns to select Yes or No.",
+    "checkErrorsMode": "onNext",
+    "pages": [
+      {
+        "name": "page1",
+        "title": "Test Questions",
+        "elements": [
+          {
+            "type": "dropdown",
+            "name": "question1",
+            "title": "Do you like testing forms?",
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "yes",
+                "text": "Yes"
+              },
+              {
+                "value": "no",
+                "text": "No"
+              }
+            ],
+            "placeholder": "Select Yes or No"
+          },
+          {
+            "type": "dropdown",
+            "name": "question2",
+            "title": "Is this form easy to use?",
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "yes",
+                "text": "Yes"
+              },
+              {
+                "value": "no",
+                "text": "No"
+              }
+            ],
+            "placeholder": "Select Yes or No"
+          },
+          {
+            "type": "dropdown",
+            "name": "question3",
+            "title": "Would you recommend this form?",
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "yes",
+                "text": "Yes"
+              },
+              {
+                "value": "no",
+                "text": "No"
+              }
+            ],
+            "placeholder": "Select Yes or No"
+          }
+        ]
+      }
+    ],
+    "showProgressBar": "none",
+    "progressBarType": "buttons",
+    "showQuestionNumbers": "off",
+    "completeText": "Submit Form"
+  },
+  "settings": {
+    "enableWebhook": false,
+    "enableFileUploads": true,
+    "enableCSVExport": true
+  }
+}

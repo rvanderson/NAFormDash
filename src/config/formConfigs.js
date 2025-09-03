@@ -42,7 +42,7 @@ export const FORM_CONFIGS = {
 
 // API Configuration
 export const API_CONFIG = {
-  baseURL: 'http://localhost:3001/api',
+  baseURL: '/api',
   endpoints: {
     submitForm: (formId) => `/forms/${formId}/submit`,
     getSubmissions: (formId) => `/forms/${formId}/submissions`,
