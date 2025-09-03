@@ -1,0 +1,296 @@
+/* Custom SurveyJS Theme */
+.sv-root {
+  font-family: inherit;
+  background: transparent;
+}
+
+.sv-container-modern {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.sv-header {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 0 2rem 0 !important;
+  margin: 0 !important;
+}
+
+.sv-header__title {
+  font-size: 1.5rem !important;
+  font-weight: 600 !important;
+  color: #111827 !important;
+  margin: 0 !important;
+  line-height: 1.5 !important;
+}
+
+.sv-header__description {
+  font-size: 0.875rem !important;
+  color: #6b7280 !important;
+  margin: 0.5rem 0 0 0 !important;
+  line-height: 1.5 !important;
+}
+
+.sv-page {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+}
+
+.sv-page__title {
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  color: #111827 !important;
+  margin: 0 0 1.5rem 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+.sv-question {
+  margin-bottom: 1.5rem !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.sv-question__title {
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  color: #374151 !important;
+  margin-bottom: 0.5rem !important;
+  line-height: 1.5 !important;
+}
+
+.sv-question__content {
+  background: transparent !important;
+}
+
+/* Input Fields */
+.sv-text, .sv-comment, .sv-dropdown-popup, .sv-selectbase, 
+.sv-text input, .sv-comment textarea, .sv-dropdown select {
+  border: 1px solid #d1d5db !important;
+  border-radius: 0.5rem !important;
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.875rem !important;
+  background: white !important;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+  width: 100% !important;
+  font-family: inherit !important;
+}
+
+.sv-text:focus, .sv-comment:focus, .sv-dropdown-popup:focus,
+.sv-text input:focus, .sv-comment textarea:focus, .sv-dropdown select:focus {
+  outline: none !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+.sv-comment, .sv-comment textarea {
+  min-height: 100px !important;
+  resize: vertical !important;
+}
+
+/* Checkboxes and Radio buttons */
+.sv-checkbox, .sv-radiogroup {
+  margin: 0 !important;
+}
+
+.sv-checkbox__item, .sv-radiogroup__item {
+  margin-bottom: 0.75rem !important;
+  display: flex !important;
+  align-items: center !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.sv-checkbox__item:last-child, .sv-radiogroup__item:last-child {
+  margin-bottom: 0 !important;
+}
+
+.sv-checkbox__item-control, .sv-radiogroup__item-control {
+  margin-right: 0.75rem !important;
+  width: 1rem !important;
+  height: 1rem !important;
+  flex-shrink: 0 !important;
+}
+
+.sv-checkbox__item-text, .sv-radiogroup__item-text {
+  font-size: 0.875rem !important;
+  color: #374151 !important;
+  line-height: 1.5 !important;
+}
+
+/* Progress Bar */
+.sv-progress {
+  background: #f3f4f6 !important;
+  height: 0.5rem !important;
+  border-radius: 0.25rem !important;
+  margin-bottom: 2rem !important;
+  overflow: hidden !important;
+}
+
+.sv-progress__bar {
+  background: #111827 !important;
+  height: 100% !important;
+  border-radius: 0.25rem !important;
+  transition: width 0.3s ease !important;
+}
+
+/* Action Bar and Buttons */
+.sv-action-bar {
+  padding: 2rem 0 0 0 !important;
+  border-top: 1px solid #e5e7eb !important;
+  margin-top: 2rem !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  background: transparent !important;
+}
+
+.sv-btn, .sv-action__content {
+  background: #111827 !important;
+  color: white !important;
+  border: none !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: background-color 0.15s ease-in-out !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.sv-btn:hover, .sv-action__content:hover {
+  background: #1f2937 !important;
+  color: white !important;
+}
+
+.sv-btn--navigation-prev, .sv-action--prev .sv-action__content {
+  background: transparent !important;
+  color: #6b7280 !important;
+  border: 1px solid #d1d5db !important;
+}
+
+.sv-btn--navigation-prev:hover, .sv-action--prev .sv-action__content:hover {
+  background: #f9fafb !important;
+  color: #374151 !important;
+}
+
+/* File Upload */
+.sv-file {
+  border: 2px dashed #d1d5db !important;
+  border-radius: 0.5rem !important;
+  padding: 2rem !important;
+  text-align: center !important;
+  background: #f9fafb !important;
+  transition: border-color 0.15s ease-in-out !important;
+}
+
+.sv-file:hover {
+  border-color: #9ca3af !important;
+}
+
+.sv-file__choose-btn {
+  background: #111827 !important;
+  color: white !important;
+  border: none !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.875rem !important;
+  cursor: pointer !important;
+  margin-top: 0.5rem !important;
+}
+
+/* Boolean/Toggle */
+.sv-boolean {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+}
+
+.sv-boolean__switch {
+  width: 3rem !important;
+  height: 1.5rem !important;
+  background: #d1d5db !important;
+  border-radius: 0.75rem !important;
+  position: relative !important;
+  cursor: pointer !important;
+  transition: background-color 0.15s ease-in-out !important;
+  border: none !important;
+}
+
+.sv-boolean__switch--checked {
+  background: #111827 !important;
+}
+
+.sv-boolean__slider {
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+  background: white !important;
+  border-radius: 50% !important;
+  position: absolute !important;
+  top: 0.125rem !important;
+  left: 0.125rem !important;
+  transition: transform 0.15s ease-in-out !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.sv-boolean__switch--checked .sv-boolean__slider {
+  transform: translateX(1.5rem) !important;
+}
+
+/* Dropdown */
+.sv-dropdown {
+  position: relative !important;
+}
+
+.sv-dropdown__filter-string-input {
+  border: 1px solid #d1d5db !important;
+  border-radius: 0.5rem !important;
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.875rem !important;
+  background: white !important;
+  width: 100% !important;
+}
+
+/* Remove default SurveyJS styling */
+.sv-root .sv-body {
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.sv-container-modern .sv-body {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* Completion page */
+.sv-completedpage {
+  text-align: center !important;
+  padding: 2rem !important;
+  background: transparent !important;
+}
+
+.sv-completedpage h3 {
+  color: #111827 !important;
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 1rem !important;
+}
+
+.sv-completedpage p {
+  color: #6b7280 !important;
+  font-size: 0.875rem !important;
+  line-height: 1.5 !important;
+}

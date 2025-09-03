@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand Colors with OKLCH for better color consistency */
+  --color-brand-50: oklch(0.98 0.01 240);
+  --color-brand-100: oklch(0.95 0.02 240);
+  --color-brand-500: oklch(0.45 0.1 240);
+  --color-brand-600: oklch(0.35 0.12 240);
+  --color-brand-700: oklch(0.25 0.14 240);
+  --color-brand-900: oklch(0.15 0.08 240);
+  
+  /* Semantic Colors */
+  --color-surface: oklch(1.0 0 0);
+  --color-surface-secondary: oklch(0.99 0.005 240);
+  --color-surface-tertiary: oklch(0.975 0.01 240);
+  --color-border: oklch(0.9 0.015 240);
+  --color-border-hover: oklch(0.85 0.02 240);
+  
+  /* Status Colors */
+  --color-success-50: oklch(0.98 0.02 142);
+  --color-success-500: oklch(0.64 0.15 142);
+  --color-success-700: oklch(0.45 0.18 142);
+  
+  --color-warning-50: oklch(0.98 0.02 85);
+  --color-warning-500: oklch(0.8 0.12 85);
+  --color-warning-700: oklch(0.6 0.15 85);
+  
+  --color-purple-50: oklch(0.98 0.02 300);
+  --color-purple-500: oklch(0.6 0.18 300);
+  --color-purple-700: oklch(0.45 0.2 300);
+  
+  /* Typography */
+  --font-display: "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  
+  /* Spacing enhancements */
+  --spacing-18: 4.5rem;
+  --spacing-22: 5.5rem;
+  
+  /* Enhanced shadows for depth */
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-card-hover: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-button: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+/* Custom utility classes for reusable patterns */
+@utility card-base {
+  background-color: var(--color-surface);
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  transition: all 0.2s ease-in-out;
+}
+
+@utility card-hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+}
+
+@utility btn-primary {
+  background-color: var(--color-brand-600);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  box-shadow: var(--shadow-button);
+  transition: all 0.2s ease-in-out;
+  
+  &:hover {
+    background-color: var(--color-brand-700);
+    box-shadow: var(--shadow-card);
+  }
+  
+  &:focus {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
+  }
+}
+
+@utility btn-secondary {
+  background-color: var(--color-surface);
+  color: var(--color-brand-600);
+  border: 1px solid var(--color-border);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  
+  &:hover {
+    background-color: var(--color-surface-secondary);
+    border-color: var(--color-border-hover);
+  }
+  
+  &:focus {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
+  }
+}
+
+@utility status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Additional responsive utilities */
+@utility responsive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+@utility focus-ring {
+  &:focus {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
+  }
+}
+
+/* Dark mode support */
+@layer base {
+  [data-theme='dark'] {
+    --color-surface: oklch(0.1 0.01 240);
+    --color-surface-secondary: oklch(0.12 0.015 240);
+    --color-surface-tertiary: oklch(0.15 0.02 240);
+    --color-border: oklch(0.25 0.02 240);
+    --color-border-hover: oklch(0.35 0.03 240);
+  }
+  
+  /* Ensure smooth font rendering */
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* SurveyJS base theme (required) */
+@import "survey-core/survey-core.min.css";
+/* Global SurveyJS overrides */
+@import "./forms/survey-theme.css";
