@@ -39,7 +39,7 @@
       }
     ],
     "showProgressBar": "top",
-    "progressBarType": "buttons",
+    "progressBarType": "questions",
     "showQuestionNumbers": "off",
     "completeText": "Submit Form"
   },

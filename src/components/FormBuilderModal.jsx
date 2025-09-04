@@ -90,7 +90,7 @@ const FormBuilderModal = ({ isOpen, onClose, onFormGenerated }) => {
                 🤖 Create New Form with AI
               </h2>
               <p className="text-gray-600 mt-1">
-                Describe your form and let GPT-5 generate it automatically
+                Describe your form and Form-o-tron will generate it for you.
               </p>
             </div>
             <button
@@ -148,14 +148,12 @@ const FormBuilderModal = ({ isOpen, onClose, onFormGenerated }) => {
               <textarea
                 value={formData.description}
                 onChange={(e) => handleInputChange('description', e.target.value)}
-                rows={6}
+                rows={9}
                 disabled={isGenerating}
                 placeholder="Describe what information you want to collect. Be specific about:
 • What type of form this is (survey, application, feedback, etc.)
 • What questions you want to ask
 • Any specific field types (multiple choice, file uploads, etc.)
-• The target audience
-• Any special requirements
 
 Example: 'Create a customer satisfaction survey for our restaurant. Include questions about food quality, service speed, atmosphere, and overall experience. Use rating scales for most questions and include a comment box for additional feedback. Also ask for contact info if they want a follow-up.'"
                 className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors bg-surface-secondary disabled:opacity-50 disabled:cursor-not-allowed resize-none"
@@ -227,9 +225,9 @@ Example: 'Create a customer satisfaction survey for our restaurant. Include ques
             <div className="flex items-start gap-3">
               <div className="text-2xl">🧠</div>
               <div>
-                <h3 className="font-medium text-gray-900 mb-1">Powered by GPT-5</h3>
+                <h3 className="font-medium text-gray-900 mb-1">Be as specific as you can!</h3>
                 <p className="text-sm text-gray-600">
-                  Our AI analyzes your description and automatically generates a professional form with appropriate question types, validation rules, and multi-step structure based on best practices.
+                  Your input will give the AI all the information it needs to generate a form, so be thorough and specific.
                 </p>
               </div>
             </div>

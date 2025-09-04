@@ -1,0 +1,109 @@
+{
+  "id": "test-some-fields",
+  "name": "Test some fields",
+  "description": "1. Which animals would you like to see in real life? *\nPlease select all that apply. (image picker)\n2. Signature line\n3. How satisfied are you with our product? Smiley rating 1 - 5\n",
+  "urlSlug": "test-some-fields",
+  "webhookUrl": null,
+  "createdAt": "2025-09-03T21:33:42.431Z",
+  "generatedBy": "GPT-4o",
+  "formDefinition": {
+    "title": "Animal Preference and Product Satisfaction Survey",
+    "description": "Please complete the form below to share your preferences and feedback.",
+    "checkErrorsMode": "onNext",
+    "pages": [
+      {
+        "name": "animalPreference",
+        "title": "Animal Preference",
+        "elements": [
+          {
+            "type": "checkbox",
+            "name": "preferredAnimals",
+            "title": "Which animals would you like to see in real life?",
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "lion",
+                "text": "Lion"
+              },
+              {
+                "value": "elephant",
+                "text": "Elephant"
+              },
+              {
+                "value": "tiger",
+                "text": "Tiger"
+              },
+              {
+                "value": "panda",
+                "text": "Panda"
+              },
+              {
+                "value": "giraffe",
+                "text": "Giraffe"
+              }
+            ],
+            "showLabel": true
+          }
+        ]
+      },
+      {
+        "name": "signature",
+        "title": "Signature",
+        "elements": [
+          {
+            "type": "text",
+            "name": "signatureLine",
+            "title": "Signature",
+            "isRequired": true,
+            "placeholder": "Please sign here"
+          }
+        ]
+      },
+      {
+        "name": "productSatisfaction",
+        "title": "Product Satisfaction",
+        "elements": [
+          {
+            "type": "rating",
+            "name": "satisfactionRating",
+            "title": "How satisfied are you with our product?",
+            "isRequired": true,
+            "rateValues": [
+              {
+                "value": 1,
+                "text": "Very Unsatisfied"
+              },
+              {
+                "value": 2,
+                "text": "Unsatisfied"
+              },
+              {
+                "value": 3,
+                "text": "Neutral"
+              },
+              {
+                "value": 4,
+                "text": "Satisfied"
+              },
+              {
+                "value": 5,
+                "text": "Very Satisfied"
+              }
+            ],
+            "minRateDescription": "Very Unsatisfied",
+            "maxRateDescription": "Very Satisfied"
+          }
+        ]
+      }
+    ],
+    "showProgressBar": "top",
+    "progressBarType": "buttons",
+    "showQuestionNumbers": "off",
+    "completeText": "Submit Form"
+  },
+  "settings": {
+    "enableWebhook": false,
+    "enableFileUploads": true,
+    "enableCSVExport": true
+  }
+}
