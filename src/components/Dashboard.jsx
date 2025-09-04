@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const FormCard = ({ title, description, status, responses, date, path, isGenerated, generatedBy, onEdit, onArchive, onTogglePublic, formId, isPublic, urlSlug }) => {
+const FormCard = ({ title, description, status, responses, date, path, generatedBy, onEdit, onArchive, onTogglePublic, formId, isPublic, urlSlug }) => {
   const navigate = useNavigate();
   const [showActions, setShowActions] = useState(false);
   const actionsRef = useRef(null);
@@ -52,11 +52,6 @@ const FormCard = ({ title, description, status, responses, date, path, isGenerat
             <span className={`status-badge border ${getStatusStyles(status)}`}>
               {status}
             </span>
-            {isGenerated && (
-              <span className="status-badge border bg-purple-50 text-purple-700 border-purple-500/20">
-                🤖 AI
-              </span>
-            )}
           </div>
           <div className="flex items-center gap-2">
             {path && (
@@ -169,7 +164,7 @@ const FormCard = ({ title, description, status, responses, date, path, isGenerat
   );
 };
 
-const FormListItem = ({ title, description, status, responses, date, path, isGenerated, generatedBy, onEdit, onArchive, onTogglePublic, formId, isPublic, urlSlug }) => {
+const FormListItem = ({ title, description, status, responses, date, path, generatedBy, onEdit, onArchive, onTogglePublic, formId, isPublic, urlSlug }) => {
   const navigate = useNavigate();
   const [showActions, setShowActions] = useState(false);
   const actionsRef = useRef(null);
@@ -222,11 +217,6 @@ const FormListItem = ({ title, description, status, responses, date, path, isGen
               <span className={`status-badge border ${getStatusStyles(status)}`}>
                 {status}
               </span>
-              {isGenerated && (
-                <span className="status-badge border bg-purple-50 text-purple-700 border-purple-500/20">
-                  🤖 AI
-                </span>
-              )}
             </div>
             
             {/* Title and description */}
@@ -366,7 +356,6 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags }) => {
                 day: 'numeric' 
               }),
               path: `/forms/${form.id}`,
-              isGenerated: true,
               generatedBy: form.generatedBy,
               tags: form.tags || (index % 4 === 0 ? ['survey'] : index % 4 === 1 ? ['feedback'] : index % 4 === 2 ? ['onboarding'] : ['contact']), // Add demo tags
               isPublic: form.isPublic || false,
