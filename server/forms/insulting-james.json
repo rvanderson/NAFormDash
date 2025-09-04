@@ -1,0 +1,93 @@
+{
+  "id": "insulting-james",
+  "name": "Insulting James",
+  "description": "This form is designed to gather constructive feedback and suggestions for improvement for James in a respectful manner.",
+  "urlSlug": "insulting-james",
+  "webhookUrl": "https://n8n.ryananderson.ca/webhook-test/7a4e55dc-9aae-4e73-9794-502de5912bde",
+  "createdAt": "2025-09-04T14:19:20.438Z",
+  "generatedBy": "GPT-4o",
+  "formDefinition": {
+    "title": "Constructive Feedback for James",
+    "description": "This form is designed to gather constructive feedback and suggestions for improvement for James in a respectful manner.",
+    "checkErrorsMode": "onComplete",
+    "pages": [
+      {
+        "name": "page1",
+        "title": "Feedback Details",
+        "elements": [
+          {
+            "type": "radiogroup",
+            "name": "tone_preference",
+            "title": "What tone would you prefer to use in your feedback?",
+            "isRequired": true,
+            "choices": [
+              "Respectful",
+              "Direct",
+              "Humorous"
+            ]
+          },
+          {
+            "type": "dropdown",
+            "name": "feedback_category",
+            "title": "Select the category that best describes your feedback",
+            "isRequired": true,
+            "choices": [
+              "Work Performance",
+              "Communication Style",
+              "Punctuality",
+              "Team Collaboration",
+              "Professional Attire"
+            ],
+            "placeholder": "Choose a category"
+          },
+          {
+            "type": "comment",
+            "name": "specific_feedback",
+            "title": "Provide specific feedback or suggestions for improvement",
+            "isRequired": true,
+            "placeholder": "Write your feedback here..."
+          }
+        ]
+      },
+      {
+        "name": "page2",
+        "title": "Additional Comments",
+        "elements": [
+          {
+            "type": "boolean",
+            "name": "anonymous",
+            "title": "Would you like to submit your feedback anonymously?",
+            "isRequired": true
+          },
+          {
+            "type": "text",
+            "name": "your_name",
+            "title": "Your Name",
+            "visibleIf": "{anonymous} = false",
+            "placeholder": "Enter your name (optional)"
+          },
+          {
+            "type": "email",
+            "name": "your_email",
+            "title": "Your Email",
+            "visibleIf": "{anonymous} = false",
+            "placeholder": "Enter your email (optional)"
+          }
+        ]
+      }
+    ],
+    "showProgressBar": "top",
+    "progressBarType": "buttons",
+    "showQuestionNumbers": "off",
+    "completeText": "Submit Form"
+  },
+  "status": "Archived",
+  "tags": [],
+  "isPublic": false,
+  "settings": {
+    "enableWebhook": true,
+    "enableFileUploads": true,
+    "enableCSVExport": true
+  },
+  "updatedAt": "2025-09-04T14:46:35.327Z"
+}

@@ -518,27 +518,36 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags, onAvailableT
     const newStatus = form.status === 'Archived' ? 'Internal' : 'Archived';
     
     try {
-      // API call to update form status
-      // const response = await fetch(`/api/forms/${formId}`, {
-      //   method: 'PATCH',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ status: newStatus })
-      // });
-      
-      // For now, just log the action
       console.log(`${newStatus === 'Archived' ? 'Archiving' : 'Unarchiving'} form ${formId}`);
       
-      // Optimistically update the UI
-      setForms(forms.map(f => 
-        f.id === formId 
-          ? { ...f, status: newStatus }
-          : f
-      ));
-
-      console.log(`Form ${newStatus.toLowerCase()} successfully!`);
+      const response = await fetch(`/api/forms/${formId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      
+      // Check if response is ok before trying to parse JSON
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        // Update the UI with confirmed data
+        setForms(forms.map(f => 
+          f.id === formId 
+            ? { ...f, status: newStatus }
+            : f
+        ));
+        
+        console.log(`Form ${newStatus.toLowerCase()} successfully!`);
+      } else {
+        throw new Error(result.error || 'Failed to update form status');
+      }
     } catch (error) {
       console.error('Failed to update form status:', error);
-      // Handle error (show toast, revert changes, etc.)
+      alert('Error updating form status: ' + error.message);
     }
   };
 
@@ -546,10 +555,14 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags, onAvailableT
     try {
       console.log(`${isPublic ? 'Making public' : 'Making internal'} form ${formId}`);
       
+      // Determine the status based on isPublic and current status
+      const currentForm = forms.find(f => f.id === formId);
+      const status = isPublic ? 'Public' : (currentForm?.status === 'Archived' ? 'Archived' : 'Internal');
+      
       const response = await fetch(`/api/forms/${formId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isPublic })
+        body: JSON.stringify({ isPublic, status })
       });
       
       const result = await response.json();
@@ -558,7 +571,7 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags, onAvailableT
         // Update the UI with confirmed data
         setForms(forms.map(f => 
           f.id === formId 
-            ? { ...f, isPublic }
+            ? { ...f, isPublic, status }
             : f
         ));
         
@@ -608,10 +621,21 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags, onAvailableT
       }
       
       if (result.success) {
+        // Determine status based on isPublic and existing status
+        let finalUpdates = { ...updates };
+        if (updates.isPublic !== undefined) {
+          // Sync status with isPublic, but preserve Archived status
+          if (updates.isPublic) {
+            finalUpdates.status = 'Public';
+          } else if (forms.find(f => f.id === formId)?.status !== 'Archived') {
+            finalUpdates.status = 'Internal';
+          }
+        }
+        
         // Update the forms list with the new data
         const updatedForms = forms.map(f => 
           f.id === formId 
-            ? { ...f, ...updates, name: updates.title || f.name }
+            ? { ...f, ...finalUpdates, name: finalUpdates.title || f.name }
             : f
         );
         setForms(updatedForms);
@@ -721,7 +745,7 @@ const EditFormModal = ({ form, onSave, onClose, availableTags = [] }) => {
   const [formData, setFormData] = useState({
     title: form?.title || '',
     description: form?.description || '',
-    status: form?.status || 'Internal',
+    isPublic: form?.isPublic || false,
     tags: form?.tags || [],
     urlSlug: form?.urlSlug || '',
     webhookUrl: form?.webhookUrl || '',
@@ -854,18 +878,37 @@ pattern="[a-z0-9\\-]+"
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Status
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Form Visibility
             </label>
-            <select
-              value={formData.status}
-              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-              className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
-            >
-              <option value="Public">Public</option>
-              <option value="Internal">Internal</option>
-              <option value="Archived">Archived</option>
-            </select>
+            <div className="space-y-3">
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="visibility"
+                  checked={!formData.isPublic}
+                  onChange={(e) => setFormData({ ...formData, isPublic: !e.target.checked })}
+                  className="text-brand-600 focus:ring-brand-500/20 focus:ring-2"
+                />
+                <div className="ml-3">
+                  <div className="text-sm font-medium text-gray-700">Internal</div>
+                  <div className="text-xs text-gray-500">Only accessible via admin dashboard</div>
+                </div>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="visibility"
+                  checked={formData.isPublic}
+                  onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
+                  className="text-brand-600 focus:ring-brand-500/20 focus:ring-2"
+                />
+                <div className="ml-3">
+                  <div className="text-sm font-medium text-gray-700">Public</div>
+                  <div className="text-xs text-gray-500">Accessible via public URL: /f/{formData.urlSlug || 'your-slug'}</div>
+                </div>
+              </label>
+            </div>
           </div>
 
           <div>

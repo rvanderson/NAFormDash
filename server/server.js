@@ -649,9 +649,30 @@ app.patch('/api/forms/:formId', async (req, res) => {
       if (updates.description) updatedConfig.description = updates.description;
       if (updates.urlSlug) updatedConfig.urlSlug = updates.urlSlug;
       if (updates.webhookUrl !== undefined) updatedConfig.webhookUrl = updates.webhookUrl;
-      if (updates.status) updatedConfig.status = updates.status;
       if (updates.tags !== undefined) updatedConfig.tags = updates.tags;
-      if (updates.isPublic !== undefined) updatedConfig.isPublic = updates.isPublic;
+      
+      // Handle isPublic and status synchronization
+      if (updates.isPublic !== undefined) {
+        updatedConfig.isPublic = updates.isPublic;
+        // Automatically sync status with isPublic, but preserve Archived status
+        if (updates.isPublic) {
+          updatedConfig.status = 'Public';
+        } else if (updatedConfig.status !== 'Archived') {
+          updatedConfig.status = 'Internal';
+        }
+      }
+      
+      // Allow explicit status updates (this handles cases where status is explicitly set)
+      if (updates.status) {
+        updatedConfig.status = updates.status;
+        // Sync isPublic based on status
+        if (updates.status === 'Public') {
+          updatedConfig.isPublic = true;
+        } else if (updates.status === 'Internal') {
+          updatedConfig.isPublic = false;
+        }
+        // Archived status doesn't change isPublic
+      }
       
       // Update form definition fields
       if (updates.completeText) {

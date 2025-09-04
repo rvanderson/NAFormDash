@@ -3,7 +3,7 @@
   "name": "Testing Conditionals",
   "description": "Create a form with a 1 - 10 NPS question asking how sexy you feel\n\nIf the user answers 1 - 5, provide a long text question asking them to expand on why they do not feel so sexy\n\nIf the user answers 6 - 10, provide a dropdown that has the options \"hell yeah\" and \"Yeah you do\"",
   "urlSlug": "testing-conditionals",
-  "webhookUrl": null,
+  "webhookUrl": "",
   "createdAt": "2025-09-03T21:29:49.230Z",
   "generatedBy": "GPT-4o",
   "formDefinition": {
@@ -64,5 +64,7 @@
     "enableCSVExport": true
   },
   "isPublic": true,
-  "updatedAt": "2025-09-04T03:22:57.130Z"
+  "updatedAt": "2025-09-04T14:42:38.741Z",
+  "tags": [],
+  "status": "Public"
 }
