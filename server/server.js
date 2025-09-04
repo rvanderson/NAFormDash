@@ -217,6 +217,7 @@ Your task is to generate a complete SurveyJS form definition based on the user's
 5. Use professional, clear question text
 6. Include helpful placeholder text
 7. Group related questions logically
+8. Generate a professional, concise description that describes what the form collects
 
 Available SurveyJS question types:
 - text: Simple text input
@@ -235,10 +236,10 @@ Available SurveyJS question types:
 - paneldynamic: Repeating panel of questions
 
 Form structure should include:
-- title and description
-- checkErrorsMode: "onNext" or "onComplete"
-- showProgressBar: "top" for multi-page forms
-- progressBarType: "buttons" 
+- title and description (generate a professional description, don't copy user input)
+- checkErrorsMode: "onNext" for multi-page forms, "onComplete" for single-page forms
+- showProgressBar: "top" for multi-page forms, "false" for single-page forms
+- progressBarType: "buttons" for multi-page forms
 - showQuestionNumbers: "off" for cleaner look
 - pages array with elements
 - completeText: "Submit Form"
@@ -246,7 +247,7 @@ Form structure should include:
 Example response format:
 {
   "title": "Form Title",
-  "description": "Form description", 
+  "description": "A professional description of what this form collects", 
   "checkErrorsMode": "onNext",
   "pages": [
     {
@@ -307,6 +308,13 @@ Generate a complete SurveyJS form definition that captures all the necessary inf
       throw new Error('Generated form is missing required fields (title or pages)');
     }
 
+    // Post-process the form definition to ensure single-page forms don't show progress bar
+    if (formDefinition.pages.length === 1) {
+      formDefinition.showProgressBar = false;
+      // Remove progressBarType if only one page
+      delete formDefinition.progressBarType;
+    }
+
     // Create a form ID from the name
     const formId = name.toLowerCase()
       .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
@@ -321,16 +329,19 @@ Generate a complete SurveyJS form definition that captures all the necessary inf
       .replace(/-+/g, '-') // Replace multiple hyphens with single
       .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
 
-    // Create form configuration
+    // Create form configuration using AI-generated description
     const formConfig = {
       id: formId,
       name: name,
-      description: description,
+      description: formDefinition.description || description, // Use AI-generated description if available
       urlSlug: urlSlug,
       webhookUrl: webhookUrl || null,
       createdAt: new Date().toISOString(),
       generatedBy: 'GPT-4o',
       formDefinition: formDefinition,
+      status: 'Internal', // Default to Internal status
+      tags: [], // Default empty tags
+      isPublic: false, // Default to private
       settings: {
         enableWebhook: !!webhookUrl,
         enableFileUploads: true,
@@ -558,7 +569,12 @@ app.get('/api/forms', async (req, res) => {
                 generatedBy: config.generatedBy,
                 webhookUrl: config.webhookUrl,
                 submissionCount,
-                settings: config.settings
+                settings: config.settings,
+                status: config.status,
+                tags: config.tags,
+                urlSlug: config.urlSlug,
+                formDefinition: config.formDefinition,
+                isPublic: config.isPublic
               };
             } catch (error) {
               console.error(`Error processing form file ${file}:`, error);
@@ -616,6 +632,8 @@ app.patch('/api/forms/:formId', async (req, res) => {
   try {
     const { formId } = req.params;
     const updates = req.body;
+    
+    console.log(`🔧 Updating form ${formId} with:`, JSON.stringify(updates, null, 2));
     const formsDir = path.join(__dirname, 'forms');
     const formPath = path.join(formsDir, `${formId}.json`);
     
@@ -631,6 +649,9 @@ app.patch('/api/forms/:formId', async (req, res) => {
       if (updates.description) updatedConfig.description = updates.description;
       if (updates.urlSlug) updatedConfig.urlSlug = updates.urlSlug;
       if (updates.webhookUrl !== undefined) updatedConfig.webhookUrl = updates.webhookUrl;
+      if (updates.status) updatedConfig.status = updates.status;
+      if (updates.tags !== undefined) updatedConfig.tags = updates.tags;
+      if (updates.isPublic !== undefined) updatedConfig.isPublic = updates.isPublic;
       
       // Update form definition fields
       if (updates.completeText) {

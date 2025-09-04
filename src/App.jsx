@@ -12,9 +12,7 @@ function App() {
     status: [], // ['Published', 'Draft', 'Archived']
     tags: [] // ['survey', 'feedback', 'onboarding', 'contact']
   });
-  const [availableTags, setAvailableTags] = useState([
-    'survey', 'feedback', 'onboarding', 'contact'
-  ]);
+  const [availableTags, setAvailableTags] = useState([]);
 
   return (
     <Router>
@@ -37,6 +35,7 @@ function App() {
                 viewMode={viewMode} 
                 filters={filters}
                 availableTags={availableTags}
+                onAvailableTagsChange={setAvailableTags}
               />
             </>
           } />

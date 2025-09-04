@@ -13,22 +13,22 @@ TODO list.md
 [x] Allow the user to change the button text in the edit dialogue
 
 # Main Dashboard
-[ ] Search: When there is text in the search, there should be an X to clear the search.
-[ ] Let's make the cards a little taller to show more of the description.
-[ ] The cards should all have the same height.
-[ ] The number that is added to the filter when selections are made should have a slightly larger circle.
+[x] Search: When there is text in the search, there should be an X to clear the search.
+[x] Let's make the cards a little taller to show more of the description.
+[x] The cards should all have the same height.
+[x] The number that is added to the filter when selections are made should have a slightly larger circle.
 
 
 # Form Generator
-[ ] When generating a form using GPT, the description should be generated from the user input, not just copied from the user input.
-[ ] When generating a form, the defaults should be  "showProgressBar": "false", if it is only one page
-[ ] Automatically refresh the form list after a form is generated.
-[ ] Make the success message a toast notification instead of the browser alert.
-[ ] Right now the ai can generate basic forms, but it needs more context as to what form fields are available.
+[x] When generating a form using GPT, the description should be generated from the user input, not just copied from the user input.
+[x] When generating a form, the defaults should be  "showProgressBar": "false", if it is only one page
+[x] Automatically refresh the form list after a form is generated.
+[x] Make the success message a toast notification instead of the browser alert.
+[x] Right now the ai can generate basic forms, but it needs more context as to what form fields are available.
 
 # Publishing
-[ ] Currently the Draft/Archived/Published status is not real, it's a representation of the form's status in the JSON. The statuses should be Internal/Archived/Public, and they should be an accurate representation of the form's status.
-[ ] Cards with the "archived" status should not be displayed in the main dashboard until specifically filtered.
+[x] Currently the Draft/Archived/Published status is not real, it's a representation of the form's status in the JSON. The statuses should be Internal/Archived/Public, and they should be an accurate representation of the form's status.
+[x] Cards with the "archived" status should not be displayed in the main dashboard until specifically filtered.
 
 # New Features
 [ ] Use the surveyjs form editor to allow native creation and editing of forms. https://github.com/surveyjs/survey-creator

@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import FormBuilderModal from './FormBuilderModal.jsx';
+import Toast from './Toast.jsx';
 
 const Header = ({ searchQuery, onSearchChange, viewMode, onViewModeChange, filters, onFiltersChange, availableTags, onTagsChange }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [newTagName, setNewTagName] = useState('');
   const [editingTag, setEditingTag] = useState(null);
+  const [toast, setToast] = useState(null);
   const filterRef = useRef(null);
 
   useEffect(() => {
@@ -23,14 +25,15 @@ const Header = ({ searchQuery, onSearchChange, viewMode, onViewModeChange, filte
 
   const handleFormGenerated = (result) => {
     console.log('Form generated successfully:', result);
-    // TODO: Refresh the dashboard to show the new form
-    // For now, just show a success message
-    alert(`Form "${result.formName}" generated successfully! 🎉`);
-    
-    // In a real app, you might want to:
-    // - Redirect to the new form
-    // - Refresh the dashboard
-    // - Show a toast notification
+    // Show success toast
+    setToast({
+      message: `Form "${result.formName}" generated successfully! 🎉`,
+      type: 'success'
+    });
+    // Refresh the page after a short delay to show the new form
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
   };
 
   const handleStatusFilter = (status) => {
@@ -109,6 +112,13 @@ const Header = ({ searchQuery, onSearchChange, viewMode, onViewModeChange, filte
         onClose={() => setIsModalOpen(false)}
         onFormGenerated={handleFormGenerated}
       />
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     <div className="bg-surface border-b border-border">
       <div className="@container max-w-7xl mx-auto">
         <div className="px-6 py-6 @lg:px-8 @xl:px-12">
@@ -139,8 +149,19 @@ const Header = ({ searchQuery, onSearchChange, viewMode, onViewModeChange, filte
                 placeholder="Search forms..." 
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
-                className="pl-10 @sm:pl-12 pr-4 py-2 @sm:py-3 border border-border rounded-lg w-full @md:w-80 @xl:w-96 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors bg-surface-secondary"
+                className={`pl-10 @sm:pl-12 ${searchQuery ? 'pr-10' : 'pr-4'} py-2 @sm:py-3 border border-border rounded-lg w-full @md:w-80 @xl:w-96 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors bg-surface-secondary`}
               />
+              {searchQuery && (
+                <button
+                  onClick={() => onSearchChange('')}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  aria-label="Clear search"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
             </div>
             
             <div className="flex items-center gap-2 @sm:gap-3 ml-4 @md:ml-0">
@@ -158,7 +179,7 @@ const Header = ({ searchQuery, onSearchChange, viewMode, onViewModeChange, filte
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                   </svg>
                   {hasActiveFilters && (
-                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-brand-500 rounded-full text-xs flex items-center justify-center text-white">
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-brand-500 rounded-full text-xs flex items-center justify-center text-white font-medium">
                       {filters.status.length + filters.tags.length}
                     </span>
                   )}
@@ -183,7 +204,7 @@ const Header = ({ searchQuery, onSearchChange, viewMode, onViewModeChange, filte
                       <div className="mb-6">
                         <h4 className="text-sm font-medium text-gray-700 mb-2">Status</h4>
                         <div className="space-y-2">
-                          {['Published', 'Draft', 'Archived'].map(status => (
+                          {['Internal', 'Public', 'Archived'].map(status => (
                             <label key={status} className="flex items-center">
                               <input
                                 type="checkbox"

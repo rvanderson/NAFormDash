@@ -41,11 +41,17 @@
     "showProgressBar": "top",
     "progressBarType": "questions",
     "showQuestionNumbers": "off",
-    "completeText": "Submit Form"
+    "completeText": "Create Invoice"
   },
   "settings": {
     "enableWebhook": true,
     "enableFileUploads": true,
     "enableCSVExport": true
-  }
+  },
+  "urlSlug": "invoice-generator",
+  "status": "Internal",
+  "tags": [
+    "finance"
+  ],
+  "updatedAt": "2025-09-04T03:22:41.349Z"
 }

@@ -62,5 +62,7 @@
     "enableWebhook": false,
     "enableFileUploads": true,
     "enableCSVExport": true
-  }
+  },
+  "isPublic": true,
+  "updatedAt": "2025-09-04T03:22:57.130Z"
 }
