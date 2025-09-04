@@ -3,7 +3,7 @@
   "name": "Test some fields",
   "description": "1. Which animals would you like to see in real life? *\nPlease select all that apply. (image picker)\n2. Signature line\n3. How satisfied are you with our product? Smiley rating 1 - 5\n",
   "urlSlug": "test-some-fields",
-  "webhookUrl": null,
+  "webhookUrl": "",
   "createdAt": "2025-09-03T21:33:42.431Z",
   "generatedBy": "GPT-4o",
   "formDefinition": {
@@ -99,11 +99,12 @@
     "showProgressBar": "top",
     "progressBarType": "buttons",
     "showQuestionNumbers": "off",
-    "completeText": "Submit Form"
+    "completeText": "Submit It"
   },
   "settings": {
     "enableWebhook": false,
     "enableFileUploads": true,
     "enableCSVExport": true
-  }
+  },
+  "updatedAt": "2025-09-04T02:52:29.679Z"
 }

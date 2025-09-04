@@ -611,6 +611,58 @@ app.get('/api/forms/:formId/definition', async (req, res) => {
   }
 });
 
+// Update form configuration
+app.patch('/api/forms/:formId', async (req, res) => {
+  try {
+    const { formId } = req.params;
+    const updates = req.body;
+    const formsDir = path.join(__dirname, 'forms');
+    const formPath = path.join(formsDir, `${formId}.json`);
+    
+    try {
+      // Read current form config
+      const formConfigContent = await fs.readFile(formPath, 'utf-8');
+      const formConfig = JSON.parse(formConfigContent);
+      
+      // Update the form configuration
+      const updatedConfig = { ...formConfig };
+      
+      if (updates.title) updatedConfig.name = updates.title;
+      if (updates.description) updatedConfig.description = updates.description;
+      if (updates.urlSlug) updatedConfig.urlSlug = updates.urlSlug;
+      if (updates.webhookUrl !== undefined) updatedConfig.webhookUrl = updates.webhookUrl;
+      
+      // Update form definition fields
+      if (updates.completeText) {
+        updatedConfig.formDefinition.completeText = updates.completeText;
+      }
+      
+      // Update last modified timestamp
+      updatedConfig.updatedAt = new Date().toISOString();
+      
+      // Write back to file
+      await fs.writeFile(formPath, JSON.stringify(updatedConfig, null, 2));
+      
+      res.json({
+        success: true,
+        message: 'Form updated successfully',
+        formConfig: updatedConfig
+      });
+      
+    } catch (error) {
+      res.status(404).json({
+        success: false,
+        error: 'Form not found'
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 // Get form definition by URL slug (for public forms)
 app.get('/api/forms/slug/:slug', async (req, res) => {
   try {

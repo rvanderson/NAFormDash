@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const FormCard = ({ title, description, status, responses, date, path, generatedBy, onEdit, onArchive, onTogglePublic, onDownloadCSV, formId, isPublic, urlSlug }) => {
   const navigate = useNavigate();
@@ -362,6 +362,8 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags }) => {
   const [forms, setForms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingForm, setEditingForm] = useState(null);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchGeneratedForms = async () => {
@@ -400,6 +402,21 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags }) => {
 
     fetchGeneratedForms();
   }, []);
+
+  // Check for edit parameter in URL and auto-open edit modal
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const editFormId = urlParams.get('edit');
+    
+    if (editFormId && forms.length > 0 && !editingForm) {
+      const formToEdit = forms.find(form => form.id === editFormId);
+      if (formToEdit) {
+        setEditingForm(formToEdit);
+        // Clear the URL parameter after opening the modal using React Router
+        navigate('/', { replace: true });
+      }
+    }
+  }, [location.search, forms, editingForm, navigate]);
 
   // Filter forms based on search query and filters
   const filteredForms = forms.filter(form => {
@@ -511,29 +528,30 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags }) => {
 
   const handleUpdateForm = async (formId, updates) => {
     try {
-      // API call to update form metadata
-      // const response = await fetch(`/api/forms/${formId}`, {
-      //   method: 'PATCH',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(updates)
-      // });
+      const response = await fetch(`/api/forms/${formId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates)
+      });
       
-      // For now, just log the update
-      console.log(`Updating form ${formId}:`, updates);
+      const result = await response.json();
       
-      // Optimistically update the UI
-      setForms(forms.map(f => 
-        f.id === formId 
-          ? { ...f, ...updates }
-          : f
-      ));
-      setEditingForm(null);
-      
-      // Show success feedback
-      console.log('Form updated successfully!');
+      if (result.success) {
+        // Update the forms list with the new data
+        setForms(forms.map(f => 
+          f.id === formId 
+            ? { ...f, ...updates, name: updates.title || f.name }
+            : f
+        ));
+        setEditingForm(null);
+        
+        console.log('Form updated successfully!');
+      } else {
+        throw new Error(result.error || 'Failed to update form');
+      }
     } catch (error) {
       console.error('Failed to update form:', error);
-      // Handle error (show toast, revert changes, etc.)
+      alert('Error updating form: ' + error.message);
     }
   };
 
@@ -622,7 +640,9 @@ const EditFormModal = ({ form, onSave, onClose, availableTags = [] }) => {
     description: form?.description || '',
     status: form?.status || 'Draft',
     tags: form?.tags || [],
-    urlSlug: form?.urlSlug || ''
+    urlSlug: form?.urlSlug || '',
+    webhookUrl: form?.webhookUrl || '',
+    completeText: form?.formDefinition?.completeText || 'Submit Form'
   });
 
   const handleSubmit = (e) => {
@@ -642,7 +662,7 @@ const EditFormModal = ({ form, onSave, onClose, availableTags = [] }) => {
   if (!form) {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-surface rounded-lg max-w-md w-full mx-4 p-6">
+        <div className="bg-surface rounded-lg max-w-lg w-full mx-4 p-6">
           <div className="text-center">
             <p>Error: No form data provided</p>
             <button onClick={onClose} className="btn-primary mt-4">Close</button>
@@ -654,7 +674,7 @@ const EditFormModal = ({ form, onSave, onClose, availableTags = [] }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-surface rounded-lg max-w-md w-full mx-4 p-6">
+      <div className="bg-surface rounded-lg max-w-lg w-full mx-4 p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold text-gray-900">Edit Form</h2>
           <button
@@ -714,6 +734,39 @@ const EditFormModal = ({ form, onSave, onClose, availableTags = [] }) => {
             </div>
             <p className="text-xs text-gray-500 mt-1">
               This creates a public URL: <span className="font-mono text-brand-600">/f/{formData.urlSlug || 'your-slug'}</span>
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Webhook URL
+            </label>
+            <input
+              type="url"
+              value={formData.webhookUrl}
+              onChange={(e) => setFormData({ ...formData, webhookUrl: e.target.value })}
+              placeholder="https://example.com/webhook"
+              className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Optional: URL to receive form submissions via HTTP POST
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Submit Button Text
+            </label>
+            <input
+              type="text"
+              value={formData.completeText}
+              onChange={(e) => setFormData({ ...formData, completeText: e.target.value })}
+              placeholder="Submit Form"
+              className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
+              required
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Text displayed on the form's submit button
             </p>
           </div>
 

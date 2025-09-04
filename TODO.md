@@ -9,8 +9,8 @@ TODO list.md
 [x] The dashboard user should be able to edit the form from the form itself. 
 
 # Edit Form
-[ ] Allow the user to change the webhook URL in the edit dialogue
-[ ] Allow the user to change the button text in the edit dialogue
+[x] Allow the user to change the webhook URL in the edit dialogue
+[x] Allow the user to change the button text in the edit dialogue
 
 # Main Dashboard
 [ ] Search: When there is text in the search, there should be an X to clear the search.

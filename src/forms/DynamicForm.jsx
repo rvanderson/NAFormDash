@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Model } from 'survey-core';
 import { Survey } from 'survey-react-ui';
 import { FlatLight } from 'survey-core/themes';
@@ -7,6 +7,7 @@ import { FormSubmissionService } from '../services/formSubmissionService.js';
 
 const DynamicForm = () => {
   const { formId } = useParams();
+  const navigate = useNavigate();
   const [formConfig, setFormConfig] = useState(null);
   const [survey, setSurvey] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -221,7 +222,7 @@ const DynamicForm = () => {
                   Published
                 </span>
                 <button 
-                  onClick={() => window.open(`/#/?edit=${formId}`, '_blank')}
+                  onClick={() => navigate(`/?edit=${formId}`)}
                   className="flex items-center gap-2 px-3 py-1.5 text-sm bg-brand-50 text-brand-700 border border-brand-200 rounded-lg hover:bg-brand-100 transition-colors"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
