@@ -2,7 +2,7 @@
   "id": "estimate-creator",
   "name": "Estimate Creator",
   "description": "This is a form to create an estimate based on input. It needs:\n- Client name\n- project name\n- description of project\n- description of deliverables with costs",
-  "webhookUrl": "",
+  "webhookUrl": "https://n8n.ryananderson.ca/webhook-test/a5b9e028-5766-4813-b547-e4e0d2736848",
   "createdAt": "2025-09-03T14:56:08.522Z",
   "generatedBy": "GPT-4o",
   "generation_comment": "This form was originally auto-generated and has been consolidated into the /server/forms directory.",
@@ -95,7 +95,7 @@
     "enableCSVExport": true
   },
   "urlSlug": "estimate-creator",
-  "updatedAt": "2025-09-04T03:22:33.613Z",
+  "updatedAt": "2025-09-04T03:36:17.361Z",
   "status": "Internal",
   "tags": [
     "finance"

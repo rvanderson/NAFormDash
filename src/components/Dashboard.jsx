@@ -582,7 +582,30 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags, onAvailableT
         body: JSON.stringify(updates)
       });
       
-      const result = await response.json();
+      // Check if response is ok before trying to parse JSON
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      // Check if response has content before parsing JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Response is not JSON');
+      }
+      
+      const text = await response.text();
+      if (!text) {
+        throw new Error('Empty response body');
+      }
+      
+      let result;
+      try {
+        result = JSON.parse(text);
+      } catch (parseError) {
+        console.error('JSON parse error:', parseError);
+        console.error('Response text:', text);
+        throw new Error('Invalid JSON response');
+      }
       
       if (result.success) {
         // Update the forms list with the new data
