@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const FormCard = ({ title, description, status, responses, date, path, generatedBy, onEdit, onArchive, onTogglePublic, formId, isPublic, urlSlug }) => {
+const FormCard = ({ title, description, status, responses, date, path, generatedBy, onEdit, onArchive, onTogglePublic, onDownloadCSV, formId, isPublic, urlSlug }) => {
   const navigate = useNavigate();
   const [showActions, setShowActions] = useState(false);
   const actionsRef = useRef(null);
@@ -125,6 +125,19 @@ const FormCard = ({ title, description, status, responses, date, path, generated
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
+                        onDownloadCSV && onDownloadCSV(formId);
+                        setShowActions(false);
+                      }}
+                      className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-surface-secondary"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      Download CSV
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
                         onArchive(formId);
                         setShowActions(false);
                       }}
@@ -164,7 +177,7 @@ const FormCard = ({ title, description, status, responses, date, path, generated
   );
 };
 
-const FormListItem = ({ title, description, status, responses, date, path, generatedBy, onEdit, onArchive, onTogglePublic, formId, isPublic, urlSlug }) => {
+const FormListItem = ({ title, description, status, responses, date, path, generatedBy, onEdit, onArchive, onTogglePublic, onDownloadCSV, formId, isPublic, urlSlug }) => {
   const navigate = useNavigate();
   const [showActions, setShowActions] = useState(false);
   const actionsRef = useRef(null);
@@ -311,6 +324,19 @@ const FormListItem = ({ title, description, status, responses, date, path, gener
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
+                        onDownloadCSV && onDownloadCSV(formId);
+                        setShowActions(false);
+                      }}
+                      className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-surface-secondary"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      Download CSV
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
                         onArchive(formId);
                         setShowActions(false);
                       }}
@@ -405,6 +431,28 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags }) => {
   const handleEditForm = (formId) => {
     const form = forms.find(f => f.id === formId);
     setEditingForm(form);
+  };
+
+  const handleDownloadCSV = async (formId) => {
+    try {
+      const response = await fetch(`/api/forms/${formId}/submissions/csv`);
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${formId}-responses.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      } else {
+        alert('No responses found for this form');
+      }
+    } catch (error) {
+      console.error('Error downloading CSV:', error);
+      alert('Error downloading CSV file');
+    }
   };
 
   const handleArchiveForm = async (formId) => {
@@ -518,6 +566,7 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags }) => {
                     onEdit={handleEditForm}
                     onArchive={handleArchiveForm}
                     onTogglePublic={handleTogglePublic}
+                    onDownloadCSV={handleDownloadCSV}
                     {...form} 
                   />
                 ))}
@@ -531,6 +580,7 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags }) => {
                     onEdit={handleEditForm}
                     onArchive={handleArchiveForm}
                     onTogglePublic={handleTogglePublic}
+                    onDownloadCSV={handleDownloadCSV}
                     {...form} 
                   />
                 ))}

@@ -484,6 +484,34 @@ app.get('/api/forms/:formId/submissions', async (req, res) => {
   }
 });
 
+// Download CSV responses for a form
+app.get('/api/forms/:formId/submissions/csv', async (req, res) => {
+  try {
+    const { formId } = req.params;
+    const csvPath = path.join(__dirname, 'submissions', formId, 'responses.csv');
+    
+    try {
+      const csvContent = await fs.readFile(csvPath, 'utf-8');
+      
+      // Set headers for file download
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', `attachment; filename="${formId}-responses.csv"`);
+      
+      res.send(csvContent);
+    } catch (error) {
+      res.status(404).json({
+        success: false,
+        error: 'No responses found for this form'
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ 

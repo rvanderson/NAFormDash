@@ -5,8 +5,8 @@ TODO list.md
 [x] Remove the "AI" tag from the cards
 
 # Forms
-[ ] The dashboard (admin) user should have the ability to download a CSV of all responses for any form.
-[ ] The dashboard user should be able to edit the form from the form itself. 
+[x] The dashboard (admin) user should have the ability to download a CSV of all responses for any form.
+[x] The dashboard user should be able to edit the form from the form itself. 
 
 # Edit Form
 [ ] Allow the user to change the webhook URL in the edit dialogue
