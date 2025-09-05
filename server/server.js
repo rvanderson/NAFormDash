@@ -8,6 +8,10 @@ import createCsvWriter from 'csv-writer';
 import axios from 'axios';
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
+import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
+import { body, validationResult } from 'express-validator';
 
 // Load environment variables
 dotenv.config();
@@ -27,17 +31,119 @@ if (process.env.OPENAI_API_KEY) {
   console.warn('⚠️  OPENAI_API_KEY not found. Form generation will be unavailable.');
 }
 
-// Middleware
-// Allow requests from any origin in development (Vite proxy will handle requests)
-app.use(cors());
+// Security Middleware
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "https:"],
+    },
+  },
+  crossOriginEmbedderPolicy: false // Allow form embedding
+}));
+
+// Configure CORS with proper security settings
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' 
+    ? (process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : ['https://yourdomain.com'])
+    : ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:5174'],
+  credentials: true,
+  optionsSuccessStatus: 200,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+};
+app.use(cors(corsOptions));
+
+// Rate limiting
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: { error: 'Too many requests from this IP, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const strictLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 5, // Limit AI generation to 5 per hour
+  message: { error: 'AI generation rate limit exceeded. Please try again in an hour.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const webhookLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 10, // Limit webhook tests to 10 per 5 minutes
+  message: { error: 'Webhook test rate limit exceeded.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use('/api', generalLimiter);
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Authentication middleware (basic implementation for admin endpoints)
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  // If no JWT_SECRET is set, allow access (development mode)
+  if (!process.env.JWT_SECRET) {
+    console.warn('⚠️  JWT_SECRET not set. Authentication disabled for development.');
+    return next();
+  }
+
+  if (!token) {
+    return res.status(401).json({ error: 'Access token required' });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ error: 'Invalid or expired token' });
+    }
+    req.user = user;
+    next();
+  });
+};
+
+// Input validation helper
+const handleValidationErrors = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      success: false,
+      error: 'Validation failed',
+      details: errors.array()
+    });
+  }
+  next();
+};
+
+// Utility function to sanitize form ID to prevent path traversal
+function sanitizeFormId(formId) {
+  if (!formId || typeof formId !== 'string') {
+    return 'unknown';
+  }
+  return formId.replace(/[^a-zA-Z0-9-_]/g, '').substring(0, 50) || 'unknown';
+}
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: async (req, file, cb) => {
-    const formId = req.body.formId || 'unknown';
+    const formId = sanitizeFormId(req.body.formId);
     const uploadsDir = path.join(__dirname, 'submissions', formId, 'uploads');
+    
+    // Verify path is within expected directory to prevent path traversal
+    const resolvedPath = path.resolve(uploadsDir);
+    const basePath = path.resolve(__dirname, 'submissions');
+    if (!resolvedPath.startsWith(basePath)) {
+      return cb(new Error('Invalid path detected'), false);
+    }
+    
     await fs.mkdir(uploadsDir, { recursive: true });
     cb(null, uploadsDir);
   },
@@ -50,7 +156,25 @@ const storage = multer.diskStorage({
 
 const upload = multer({ 
   storage,
-  limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  fileFilter: (req, file, cb) => {
+    // Whitelist allowed MIME types
+    const allowedMimes = [
+      'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
+      'application/pdf',
+      'text/plain', 'text/csv',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ];
+    
+    if (allowedMimes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error(`File type ${file.mimetype} not allowed`), false);
+    }
+  }
 });
 
 // Utility function to ensure directory exists
@@ -152,6 +276,47 @@ async function updateCSV(formId, submissionData) {
   console.log(`✅ CSV updated for form ${formId}`);
 }
 
+// Validate webhook URL to prevent SSRF attacks
+function validateWebhookUrl(url) {
+  try {
+    const parsed = new URL(url);
+    
+    // Block private IP ranges and localhost
+    const hostname = parsed.hostname.toLowerCase();
+    const privateRanges = [
+      /^10\./,
+      /^192\.168\./,
+      /^172\.(1[6-9]|2[0-9]|3[01])\./,
+      /^127\./,
+      /^169\.254\./,
+      /^0\./,
+      /^::1$/,
+      /^fc00:/i,
+      /^fe80:/i,
+      /^localhost$/i
+    ];
+    
+    if (privateRanges.some(range => range.test(hostname)) || 
+        hostname === 'localhost' || hostname === '0.0.0.0') {
+      throw new Error('Private IP addresses and localhost not allowed');
+    }
+    
+    // Only allow HTTP/HTTPS protocols
+    if (!['http:', 'https:'].includes(parsed.protocol)) {
+      throw new Error('Only HTTP and HTTPS protocols are allowed');
+    }
+    
+    // Require HTTPS in production
+    if (process.env.NODE_ENV === 'production' && parsed.protocol !== 'https:') {
+      throw new Error('HTTPS required in production');
+    }
+    
+    return true;
+  } catch (error) {
+    throw new Error(`Invalid webhook URL: ${error.message}`);
+  }
+}
+
 // Send webhook notification
 async function sendWebhook(webhookUrl, formId, submissionData) {
   if (!webhookUrl) {
@@ -160,6 +325,9 @@ async function sendWebhook(webhookUrl, formId, submissionData) {
   }
   
   try {
+    // Validate webhook URL to prevent SSRF
+    validateWebhookUrl(webhookUrl);
+    
     const payload = {
       formId,
       submissionId: `${formId}_${Date.now()}`,
@@ -173,7 +341,8 @@ async function sendWebhook(webhookUrl, formId, submissionData) {
         'Content-Type': 'application/json',
         'User-Agent': 'NAFormDashboard/1.0'
       },
-      timeout: 10000
+      timeout: 10000,
+      maxRedirects: 3 // Limit redirects to prevent redirect loops
     });
     
     console.log(`✅ Webhook sent successfully for form ${formId}:`, response.status);
@@ -183,7 +352,11 @@ async function sendWebhook(webhookUrl, formId, submissionData) {
 }
 
 // Generate form using GPT-5 API
-app.post('/api/forms/generate', async (req, res) => {
+app.post('/api/forms/generate', strictLimiter, [
+  body('name').trim().isLength({ min: 1, max: 100 }).withMessage('Form name required (1-100 characters)'),
+  body('description').trim().isLength({ min: 1, max: 1000 }).withMessage('Description required (1-1000 characters)'),
+  body('webhookUrl').optional().isURL().withMessage('Invalid webhook URL')
+], handleValidationErrors, async (req, res) => {
   try {
     const { name, description, webhookUrl } = req.body;
     
@@ -465,7 +638,7 @@ app.post('/api/forms/:formId/submit', upload.any(), async (req, res) => {
 });
 
 // Get form submissions
-app.get('/api/forms/:formId/submissions', async (req, res) => {
+app.get('/api/forms/:formId/submissions', authenticateToken, async (req, res) => {
   try {
     const { formId } = req.params;
     const csvPath = path.join(__dirname, 'submissions', formId, 'responses.csv');
@@ -496,7 +669,7 @@ app.get('/api/forms/:formId/submissions', async (req, res) => {
 });
 
 // Download CSV responses for a form
-app.get('/api/forms/:formId/submissions/csv', async (req, res) => {
+app.get('/api/forms/:formId/submissions/csv', authenticateToken, async (req, res) => {
   try {
     const { formId } = req.params;
     const csvPath = path.join(__dirname, 'submissions', formId, 'responses.csv');
@@ -523,17 +696,70 @@ app.get('/api/forms/:formId/submissions/csv', async (req, res) => {
   }
 });
 
+// Authentication login endpoint (basic implementation)
+app.post('/api/auth/login', [
+  body('username').trim().isLength({ min: 1 }).withMessage('Username required'),
+  body('password').isLength({ min: 1 }).withMessage('Password required')
+], handleValidationErrors, async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    
+    // Simple credential check (in production, use proper user management)
+    const validUsername = process.env.ADMIN_USERNAME || 'admin';
+    const validPassword = process.env.ADMIN_PASSWORD || 'changeme123';
+    
+    if (username !== validUsername || password !== validPassword) {
+      return res.status(401).json({
+        success: false,
+        error: 'Invalid credentials'
+      });
+    }
+    
+    // Generate JWT token if secret is available
+    if (process.env.JWT_SECRET) {
+      const token = jwt.sign(
+        { username, role: 'admin' }, 
+        process.env.JWT_SECRET,
+        { expiresIn: '24h' }
+      );
+      
+      res.json({
+        success: true,
+        token,
+        message: 'Authentication successful'
+      });
+    } else {
+      res.json({
+        success: true,
+        message: 'Authentication successful (development mode)'
+      });
+    }
+    
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Authentication failed'
+    });
+  }
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'healthy', 
     timestamp: new Date().toISOString(),
-    server: 'NAFormDashboard API'
+    server: 'NAFormDashboard API',
+    security: {
+      cors: 'enabled',
+      rateLimit: 'enabled',
+      helmet: 'enabled',
+      auth: process.env.JWT_SECRET ? 'enabled' : 'disabled (dev mode)'
+    }
   });
 });
 
 // Get all forms and their submission counts
-app.get('/api/forms', async (req, res) => {
+app.get('/api/forms', authenticateToken, async (req, res) => {
   try {
     const formsDir = path.join(__dirname, 'forms');
     const submissionsDir = path.join(__dirname, 'submissions');
@@ -598,7 +824,7 @@ app.get('/api/forms', async (req, res) => {
 });
 
 // Get form definition by ID
-app.get('/api/forms/:formId/definition', async (req, res) => {
+app.get('/api/forms/:formId/definition', authenticateToken, async (req, res) => {
   try {
     const { formId } = req.params;
     const formsDir = path.join(__dirname, 'forms'); // Use the new consolidated directory
@@ -628,7 +854,12 @@ app.get('/api/forms/:formId/definition', async (req, res) => {
 });
 
 // Update form configuration
-app.patch('/api/forms/:formId', async (req, res) => {
+app.patch('/api/forms/:formId', authenticateToken, [
+  body('title').optional().trim().isLength({ max: 100 }).withMessage('Title too long (max 100 characters)'),
+  body('description').optional().trim().isLength({ max: 1000 }).withMessage('Description too long (max 1000 characters)'),
+  body('webhookUrl').optional().isURL().withMessage('Invalid webhook URL'),
+  body('urlSlug').optional().trim().matches(/^[a-z0-9-]+$/).withMessage('URL slug must contain only lowercase letters, numbers, and hyphens')
+], handleValidationErrors, async (req, res) => {
   try {
     const { formId } = req.params;
     const updates = req.body;
@@ -766,10 +997,16 @@ app.get('/api/forms/slug/:slug', async (req, res) => {
 
 
 // Webhook test endpoint
-app.post('/api/webhook/test', async (req, res) => {
+app.post('/api/webhook/test', webhookLimiter, [
+  body('webhookUrl').isURL().withMessage('Valid webhook URL required'),
+  body('testData').optional().isObject().withMessage('Test data must be an object')
+], handleValidationErrors, async (req, res) => {
   const { webhookUrl, testData } = req.body;
   
   try {
+    // Validate webhook URL to prevent SSRF
+    validateWebhookUrl(webhookUrl);
+    
     const payload = {
       test: true,
       timestamp: new Date().toISOString(),
@@ -779,7 +1016,8 @@ app.post('/api/webhook/test', async (req, res) => {
     
     const response = await axios.post(webhookUrl, payload, {
       headers: { 'Content-Type': 'application/json' },
-      timeout: 10000
+      timeout: 10000,
+      maxRedirects: 3
     });
     
     res.json({
