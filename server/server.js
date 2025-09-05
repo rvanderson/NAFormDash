@@ -12,6 +12,7 @@ import jwt from 'jsonwebtoken';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import { body, validationResult } from 'express-validator';
+import validator from 'validator';
 
 // Load environment variables
 dotenv.config();
