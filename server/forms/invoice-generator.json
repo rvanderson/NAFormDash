@@ -1,7 +1,7 @@
 {
   "id": "invoice-generator",
   "name": "Invoice Generator",
-  "description": "I need a form that will send a webhook response to our accounting system. \n\nFields:\n- Client Name\n- Project Name\n- Description of what's on the invoice with prices.\n\nIt should be one single page, no pagination.",
+  "description": "Automatically generate an invoice from a webhook.",
   "webhookUrl": "https://n8n.ryananderson.ca/webhook/a5b9e028-5766-4813-b547-e4e0d2736848",
   "createdAt": "2025-09-03T17:20:38.117Z",
   "generatedBy": "GPT-4o",
@@ -53,5 +53,6 @@
   "tags": [
     "finance"
   ],
-  "updatedAt": "2025-09-04T03:22:41.349Z"
+  "updatedAt": "2025-09-05T19:35:30.854Z",
+  "isPublic": false
 }

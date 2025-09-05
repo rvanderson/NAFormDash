@@ -1,23 +1,27 @@
 # NA Form Dashboard
 
-A modern, responsive form management dashboard built with React, Vite, and Tailwind CSS v4. This application provides a comprehensive interface for creating, managing, and viewing form submissions for design projects.
+A modern, responsive form management dashboard built with React, Vite, and Tailwind CSS v4. This application provides a comprehensive interface for creating, managing, and viewing form submissions with an intelligent AI-powered form builder.
 
 ## ✨ Features
 
-- **📊 Dashboard Overview**: Visual grid layout displaying all forms with status indicators
-- **📝 Dynamic Form Builder**: Client onboarding forms with multi-step wizards
-- **🎨 Modern Design System**: Built with Tailwind CSS v4 using OKLCH color space
+- **📊 Dashboard Overview**: Visual grid/list layout displaying all forms with status indicators and search
+- **🤖 AI Form Builder**: GPT-5 powered intelligent form generation from natural language descriptions
+- **📝 Dynamic Forms**: SurveyJS-powered forms with conditional logic and multi-step wizards  
+- **🎨 Modern Design System**: Built with Tailwind CSS v4 using custom design tokens
 - **📱 Responsive Design**: Container queries for true responsive components
-- **♿ Accessibility First**: WCAG compliant with proper focus management
-- **🚀 Performance Optimized**: Vite build system with hot module replacement
+- **🔌 Webhook Integration**: Real-time form submission notifications
+- **💾 Auto Data Export**: CSV export and file upload handling
+- **⚡ Performance Optimized**: Vite build system with hot module replacement
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: React 19.1.1 with React Router DOM
-- **Build Tool**: Vite 6.3.5
+- **Frontend**: React 19.1.1 with React Router DOM 7.8.2
+- **Build Tool**: Vite 6.3.5 with hot module replacement
 - **Styling**: Tailwind CSS v4.1.12 with custom design tokens
-- **Forms**: SurveyJS for dynamic form generation
-- **Icons**: Heroicons (SVG-based)
+- **Forms**: SurveyJS (survey-core 2.3.4, survey-react-ui 2.3.4)
+- **Backend**: Node.js Express server with file handling
+- **Icons**: Heroicons (inline SVG)
+- **AI Integration**: GPT-5 powered form generation
 
 ## 🎯 Design System
 
@@ -74,30 +78,29 @@ npm start        # Start production API server
 ```
 ├── src/                 # Frontend React application
 │   ├── components/      # Reusable UI components
-│   │   ├── Dashboard.jsx   # Main dashboard with form grid
-│   │   ├── Header.jsx      # Navigation header
-│   │   └── Sidebar.jsx     # Navigation sidebar
+│   │   ├── Dashboard.jsx        # Main dashboard with form grid/list view
+│   │   ├── Header.jsx           # Navigation header with search
+│   │   ├── FormBuilderModal.jsx # AI-powered form creation modal
+│   │   └── Toast.jsx           # Success/error notifications
 │   ├── config/          # Configuration files
-│   │   └── formConfigs.js  # Form configurations and API settings
+│   │   └── formConfigs.js      # Form configurations and API settings
 │   ├── services/        # API and business logic
 │   │   └── formSubmissionService.js # Form submission handling
 │   ├── forms/           # Form-related components
-│   │   ├── ClientOnboardingForm.jsx # Multi-step client intake
-│   │   └── survey-theme.css         # SurveyJS custom styling
+│   │   ├── DynamicForm.jsx     # Dynamic form renderer with admin view
+│   │   └── PublicForm.jsx      # Public form submission page
+│   ├── assets/          # Static assets
 │   ├── index.css        # Tailwind config + custom utilities
 │   ├── App.jsx         # Main app component with routing
 │   └── main.jsx        # React app entry point
 └── server/             # Backend API server
-    ├── server.js       # Express server with submission handling
+    ├── server.js       # Express server with AI form generation
     ├── package.json    # Server dependencies
-    ├── README.md       # Server documentation
-    └── submissions/    # Generated form data (created at runtime)
-        ├── client-onboarding/
-        │   ├── form-structure.md    # Human-readable documentation
-        │   ├── form-definition.json # SurveyJS form definition
-        │   ├── responses.csv        # All submissions in CSV
-        │   └── uploads/             # File uploads directory
-        └── [form-id]/   # Additional forms follow same structure
+    ├── forms/          # Generated form definitions (JSON)
+    └── submissions/    # Form submission data
+        └── [form-id]/  # Each form gets its own directory
+            ├── responses.csv        # All submissions in CSV
+            └── uploads/             # File uploads directory
 ```
 
 ## 🎨 Design Features
@@ -157,18 +160,26 @@ npm start        # Start production API server
 
 ## 🔍 Form Features
 
-### Client Onboarding Form
-- **Multi-step Process**: 4-page wizard with progress tracking
-- **Dynamic Validation**: Real-time field validation
-- **File Uploads**: Brand asset upload capability
-- **Conditional Logic**: Show/hide fields based on responses
-- **Mobile Optimized**: Touch-friendly interface
+### AI Form Builder
+- **Natural Language Input**: Describe your form in plain English
+- **GPT-5 Integration**: Intelligent form generation with proper field types
+- **Webhook Configuration**: Optional webhook URL setup during creation
+- **Form Validation**: Built-in validation and error handling
+- **Real-time Preview**: Instant form generation and preview
+
+### Dynamic Forms
+- **SurveyJS Engine**: Powerful form rendering with conditional logic
+- **Multi-step Support**: Progress tracking and step navigation
+- **File Uploads**: Secure file upload capability with unique naming
+- **Mobile Optimized**: Responsive design for all devices
+- **Admin View**: Form editing and submission management
 
 ### Form Management
-- **Status Tracking**: Published, Draft, Archived states
-- **Response Counting**: Live submission statistics  
-- **Date Sorting**: Chronological form organization
-- **Quick Actions**: One-click form access and editing
+- **Dashboard Views**: Grid and list view with search and filtering
+- **Status Tracking**: Live form status indicators (API health)
+- **Response Analytics**: Submission counting and statistics
+- **Public URLs**: Shareable form links with slug-based routing
+- **Download Responses**: CSV export of all form submissions
 
 ## 📤 Form Submission System
 
@@ -187,29 +198,47 @@ npm start        # Start production API server
 ### Data Structure
 Each form creates its own directory with:
 ```
-submissions/client-onboarding/
-├── form-structure.md       # Documentation
-├── form-definition.json    # SurveyJS definition  
-├── responses.csv          # All submissions
-└── uploads/               # File attachments
+server/
+├── forms/                     # Form definitions
+│   └── [form-id].json        # SurveyJS form definition
+└── submissions/[form-id]/     # Form submission data
+    ├── responses.csv          # All submissions in CSV format
+    └── uploads/               # File attachments
 ```
 
 ### API Endpoints
+- `POST /api/forms/generate` - Generate new form with AI
+- `GET /api/forms/:formId/definition` - Get form definition
 - `POST /api/forms/:formId/submit` - Submit form data
 - `GET /api/forms/:formId/submissions` - Get submission stats
 - `POST /api/webhook/test` - Test webhook functionality
 - `GET /api/health` - Server health check
 
 ### Webhook Configuration
-Configure webhooks in `src/config/formConfigs.js`:
+Configure webhooks per form in `src/config/formConfigs.js`:
 ```javascript
-'client-onboarding': {
-  webhookUrl: 'https://your-webhook-url.com',
-  settings: {
-    enableWebhook: true,
-    enableFileUploads: true,
-    enableCSVExport: true
+export const FORM_CONFIGS = {
+  'your-form-id': {
+    title: 'Your Form Title',
+    description: 'Form description',
+    webhookUrl: 'https://your-webhook-url.com',
+    settings: {
+      enableWebhook: true,
+      enableFileUploads: true,
+      enableCSVExport: true
+    }
   }
+}
+```
+
+### AI Form Generation
+Create forms using natural language with the AI form builder:
+```javascript
+// Example form generation request
+{
+  title: "Customer Feedback Survey",
+  webhookUrl: "https://webhook.site/your-url",
+  description: "I need a customer feedback form with rating scales for service quality, product satisfaction, and likelihood to recommend. Include fields for customer name, email, and detailed comments."
 }
 ```
 
