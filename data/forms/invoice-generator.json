@@ -1,0 +1,58 @@
+{
+  "id": "invoice-generator",
+  "name": "Invoice Generator",
+  "description": "Automatically generate an invoice from a webhook.",
+  "webhookUrl": "https://n8n.ryananderson.ca/webhook/a5b9e028-5766-4813-b547-e4e0d2736848",
+  "createdAt": "2025-09-03T17:20:38.117Z",
+  "generatedBy": "GPT-4o",
+  "formDefinition": {
+    "title": "Invoice Generator",
+    "description": "Fill in the details below to generate an invoice. The information will be sent to our accounting system.",
+    "checkErrorsMode": "onComplete",
+    "pages": [
+      {
+        "name": "invoiceDetails",
+        "title": "Invoice Details",
+        "elements": [
+          {
+            "type": "text",
+            "name": "clientName",
+            "title": "Client Name",
+            "isRequired": true,
+            "placeholder": "Enter the client's full name"
+          },
+          {
+            "type": "text",
+            "name": "projectName",
+            "title": "Project Name",
+            "isRequired": true,
+            "placeholder": "Enter the project name"
+          },
+          {
+            "type": "comment",
+            "name": "invoiceDescription",
+            "title": "Invoice Description",
+            "isRequired": true,
+            "placeholder": "Describe the items and prices on the invoice"
+          }
+        ]
+      }
+    ],
+    "showProgressBar": "top",
+    "progressBarType": "questions",
+    "showQuestionNumbers": "off",
+    "completeText": "Create Invoice"
+  },
+  "settings": {
+    "enableWebhook": true,
+    "enableFileUploads": true,
+    "enableCSVExport": true
+  },
+  "urlSlug": "invoice-generator",
+  "status": "Internal",
+  "tags": [
+    "finance"
+  ],
+  "updatedAt": "2025-09-05T19:35:30.854Z",
+  "isPublic": false
+}

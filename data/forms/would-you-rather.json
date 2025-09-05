@@ -1,0 +1,63 @@
+{
+  "id": "would-you-rather",
+  "name": "Would you rather",
+  "description": "This form collects your preferences on three thought-provoking 'Would You Rather' questions.",
+  "urlSlug": "would-you-rather",
+  "webhookUrl": null,
+  "createdAt": "2025-09-05T20:29:19.420Z",
+  "generatedBy": "GPT-4o",
+  "formDefinition": {
+    "title": "Would You Rather Survey",
+    "description": "This form collects your preferences on three thought-provoking 'Would You Rather' questions.",
+    "checkErrorsMode": "onComplete",
+    "pages": [
+      {
+        "name": "preferences",
+        "title": "Would You Rather Questions",
+        "elements": [
+          {
+            "type": "radiogroup",
+            "name": "question1",
+            "title": "Would you rather have the ability to fly or be invisible?",
+            "isRequired": true,
+            "choices": [
+              "Fly",
+              "Be invisible"
+            ]
+          },
+          {
+            "type": "radiogroup",
+            "name": "question2",
+            "title": "Would you rather live in a cave or live in a treehouse?",
+            "isRequired": true,
+            "choices": [
+              "Live in a cave",
+              "Live in a treehouse"
+            ]
+          },
+          {
+            "type": "radiogroup",
+            "name": "question3",
+            "title": "Would you rather have more time or more money?",
+            "isRequired": true,
+            "choices": [
+              "More time",
+              "More money"
+            ]
+          }
+        ]
+      }
+    ],
+    "showProgressBar": false,
+    "showQuestionNumbers": "off",
+    "completeText": "Submit Form"
+  },
+  "status": "Internal",
+  "tags": [],
+  "isPublic": false,
+  "settings": {
+    "enableWebhook": false,
+    "enableFileUploads": true,
+    "enableCSVExport": true
+  }
+}

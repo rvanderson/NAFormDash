@@ -167,7 +167,7 @@ Generate a complete SurveyJS form definition that captures all the necessary inf
     };
 
     // Save to the forms directory
-    const formsDir = path.join(process.cwd(), 'server', 'forms');
+    const formsDir = path.join(process.cwd(), 'data', 'forms');
     await ensureDirectory(formsDir);
     await fs.writeFile(
       path.join(formsDir, `${formId}.json`),

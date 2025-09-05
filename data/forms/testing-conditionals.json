@@ -1,0 +1,70 @@
+{
+  "id": "testing-conditionals",
+  "name": "Testing Conditionals",
+  "description": "Create a form with a 1 - 10 NPS question asking how sexy you feel\n\nIf the user answers 1 - 5, provide a long text question asking them to expand on why they do not feel so sexy\n\nIf the user answers 6 - 10, provide a dropdown that has the options \"hell yeah\" and \"Yeah you do\"",
+  "urlSlug": "testing-conditionals",
+  "webhookUrl": "",
+  "createdAt": "2025-09-03T21:29:49.230Z",
+  "generatedBy": "GPT-4o",
+  "formDefinition": {
+    "title": "Testing Conditionals",
+    "description": "Please rate how sexy you feel and provide additional information based on your rating.",
+    "checkErrorsMode": "onNext",
+    "pages": [
+      {
+        "name": "page1",
+        "title": "NPS Rating",
+        "elements": [
+          {
+            "type": "rating",
+            "name": "nps_sexy_feeling",
+            "title": "On a scale of 1 to 10, how sexy do you feel?",
+            "isRequired": true,
+            "rateMin": 1,
+            "rateMax": 10,
+            "minRateDescription": "Not sexy at all",
+            "maxRateDescription": "Extremely sexy"
+          }
+        ]
+      },
+      {
+        "name": "page2",
+        "title": "Additional Feedback",
+        "elements": [
+          {
+            "type": "comment",
+            "name": "not_sexy_reason",
+            "title": "Please explain why you do not feel so sexy.",
+            "isRequired": true,
+            "visibleIf": "{nps_sexy_feeling} <= 5",
+            "placeholder": "Your thoughts..."
+          },
+          {
+            "type": "dropdown",
+            "name": "sexy_confirmation",
+            "title": "You rated yourself pretty high, care to confirm?",
+            "isRequired": true,
+            "visibleIf": "{nps_sexy_feeling} >= 6",
+            "choices": [
+              "Hell yeah",
+              "Yeah you do"
+            ]
+          }
+        ]
+      }
+    ],
+    "showProgressBar": "top",
+    "progressBarType": "buttons",
+    "showQuestionNumbers": "off",
+    "completeText": "Submit Form"
+  },
+  "settings": {
+    "enableWebhook": false,
+    "enableFileUploads": true,
+    "enableCSVExport": true
+  },
+  "isPublic": true,
+  "updatedAt": "2025-09-04T14:42:38.741Z",
+  "tags": [],
+  "status": "Public"
+}

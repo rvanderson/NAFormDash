@@ -1,0 +1,106 @@
+{
+  "id": "just-a-test",
+  "name": "Just a test",
+  "description": "A form that asks you what you had to eat today",
+  "urlSlug": "just-a-test",
+  "webhookUrl": null,
+  "createdAt": "2025-09-04T03:25:12.861Z",
+  "generatedBy": "GPT-4o",
+  "formDefinition": {
+    "title": "Daily Meal Intake Survey",
+    "description": "Please provide information about your meals today.",
+    "checkErrorsMode": "onNext",
+    "pages": [
+      {
+        "name": "page1",
+        "title": "Breakfast",
+        "elements": [
+          {
+            "type": "text",
+            "name": "breakfastItems",
+            "title": "What did you have for breakfast?",
+            "isRequired": true,
+            "placeholder": "E.g., eggs, toast, coffee"
+          },
+          {
+            "type": "rating",
+            "name": "breakfastSatisfaction",
+            "title": "How satisfied were you with your breakfast?",
+            "isRequired": true,
+            "rateMin": 1,
+            "rateMax": 5,
+            "minRateDescription": "Very unsatisfied",
+            "maxRateDescription": "Very satisfied"
+          }
+        ]
+      },
+      {
+        "name": "page2",
+        "title": "Lunch",
+        "elements": [
+          {
+            "type": "text",
+            "name": "lunchItems",
+            "title": "What did you have for lunch?",
+            "isRequired": true,
+            "placeholder": "E.g., salad, sandwich, juice"
+          },
+          {
+            "type": "rating",
+            "name": "lunchSatisfaction",
+            "title": "How satisfied were you with your lunch?",
+            "isRequired": true,
+            "rateMin": 1,
+            "rateMax": 5,
+            "minRateDescription": "Very unsatisfied",
+            "maxRateDescription": "Very satisfied"
+          }
+        ]
+      },
+      {
+        "name": "page3",
+        "title": "Dinner",
+        "elements": [
+          {
+            "type": "text",
+            "name": "dinnerItems",
+            "title": "What did you have for dinner?",
+            "isRequired": true,
+            "placeholder": "E.g., pasta, chicken, wine"
+          },
+          {
+            "type": "rating",
+            "name": "dinnerSatisfaction",
+            "title": "How satisfied were you with your dinner?",
+            "isRequired": true,
+            "rateMin": 1,
+            "rateMax": 5,
+            "minRateDescription": "Very unsatisfied",
+            "maxRateDescription": "Very satisfied"
+          }
+        ]
+      },
+      {
+        "name": "page4",
+        "title": "Snacks & Drinks",
+        "elements": [
+          {
+            "type": "comment",
+            "name": "snacksDrinks",
+            "title": "Did you have any snacks or drinks today?",
+            "placeholder": "Describe any snacks or drinks you had"
+          }
+        ]
+      }
+    ],
+    "showProgressBar": "top",
+    "progressBarType": "buttons",
+    "showQuestionNumbers": "off",
+    "completeText": "Submit Form"
+  },
+  "settings": {
+    "enableWebhook": false,
+    "enableFileUploads": true,
+    "enableCSVExport": true
+  }
+}

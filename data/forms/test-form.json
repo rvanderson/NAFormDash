@@ -1,0 +1,77 @@
+{
+  "id": "test-form",
+  "name": "Test Form",
+  "description": "This form is designed to collect essential information in a structured and user-friendly manner.",
+  "urlSlug": "test-form",
+  "webhookUrl": null,
+  "createdAt": "2025-09-05T20:30:39.241Z",
+  "generatedBy": "GPT-4o",
+  "formDefinition": {
+    "title": "Test Form",
+    "description": "This form is designed to collect essential information in a structured and user-friendly manner.",
+    "checkErrorsMode": "onNext",
+    "pages": [
+      {
+        "name": "personalInformation",
+        "title": "Personal Information",
+        "elements": [
+          {
+            "type": "text",
+            "name": "firstName",
+            "title": "First Name",
+            "isRequired": true,
+            "placeholder": "Enter your first name"
+          },
+          {
+            "type": "text",
+            "name": "lastName",
+            "title": "Last Name",
+            "isRequired": true,
+            "placeholder": "Enter your last name"
+          },
+          {
+            "type": "email",
+            "name": "emailAddress",
+            "title": "Email Address",
+            "isRequired": true,
+            "placeholder": "Enter your email address"
+          }
+        ]
+      },
+      {
+        "name": "feedback",
+        "title": "Feedback",
+        "elements": [
+          {
+            "type": "rating",
+            "name": "satisfaction",
+            "title": "How satisfied are you with our service?",
+            "isRequired": true,
+            "rateMin": 1,
+            "rateMax": 5,
+            "minRateDescription": "Not Satisfied",
+            "maxRateDescription": "Very Satisfied"
+          },
+          {
+            "type": "comment",
+            "name": "additionalComments",
+            "title": "Additional Comments",
+            "placeholder": "Provide any additional feedback here"
+          }
+        ]
+      }
+    ],
+    "showProgressBar": "top",
+    "progressBarType": "buttons",
+    "showQuestionNumbers": "off",
+    "completeText": "Submit Form"
+  },
+  "status": "Internal",
+  "tags": [],
+  "isPublic": false,
+  "settings": {
+    "enableWebhook": false,
+    "enableFileUploads": true,
+    "enableCSVExport": true
+  }
+}

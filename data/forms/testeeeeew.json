@@ -1,0 +1,45 @@
+{
+  "id": "testeeeeew",
+  "name": "testeeeeew",
+  "description": "This form is designed to collect email addresses for communication purposes, ensuring we can keep you informed about updates and relevant information.",
+  "urlSlug": "testeeeeew",
+  "webhookUrl": null,
+  "createdAt": "2025-09-05T20:28:51.245Z",
+  "generatedBy": "GPT-4o",
+  "formDefinition": {
+    "title": "Email Collection Form",
+    "description": "This form is designed to collect email addresses for communication purposes, ensuring we can keep you informed about updates and relevant information.",
+    "checkErrorsMode": "onComplete",
+    "pages": [
+      {
+        "name": "contactInformation",
+        "title": "Contact Information",
+        "elements": [
+          {
+            "type": "email",
+            "name": "emailAddress",
+            "title": "Email Address",
+            "isRequired": true,
+            "placeholder": "Enter your email address",
+            "validators": [
+              {
+                "type": "email"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "showProgressBar": false,
+    "showQuestionNumbers": "off",
+    "completeText": "Submit Form"
+  },
+  "status": "Internal",
+  "tags": [],
+  "isPublic": false,
+  "settings": {
+    "enableWebhook": false,
+    "enableFileUploads": true,
+    "enableCSVExport": true
+  }
+}

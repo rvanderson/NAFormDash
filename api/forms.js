@@ -14,7 +14,7 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     try {
-      const formsDir = path.join(process.cwd(), 'server', 'forms');
+      const formsDir = path.join(process.cwd(), 'data', 'forms');
       
       try {
         const formFiles = await fs.readdir(formsDir);

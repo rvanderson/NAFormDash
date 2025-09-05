@@ -15,7 +15,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const formsDir = path.join(process.cwd(), 'server', 'forms');
+    const formsDir = path.join(process.cwd(), 'data', 'forms');
     const formPath = path.join(formsDir, `${formId}.json`);
     
     if (req.method === 'GET') {

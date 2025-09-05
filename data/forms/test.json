@@ -1,0 +1,99 @@
+{
+  "id": "test",
+  "name": "test",
+  "description": "This form is designed to gather detailed responses for a comprehensive test evaluation, ensuring all necessary information is collected efficiently.",
+  "urlSlug": "test",
+  "webhookUrl": null,
+  "createdAt": "2025-09-05T20:03:04.002Z",
+  "generatedBy": "GPT-4o",
+  "formDefinition": {
+    "title": "Comprehensive Test Form",
+    "description": "This form is designed to gather detailed responses for a comprehensive test evaluation, ensuring all necessary information is collected efficiently.",
+    "checkErrorsMode": "onNext",
+    "pages": [
+      {
+        "name": "page1",
+        "title": "Personal Information",
+        "elements": [
+          {
+            "type": "text",
+            "name": "fullName",
+            "title": "Full Name",
+            "isRequired": true,
+            "placeholder": "Enter your full name"
+          },
+          {
+            "type": "email",
+            "name": "emailAddress",
+            "title": "Email Address",
+            "isRequired": true,
+            "placeholder": "Enter your email address"
+          },
+          {
+            "type": "dropdown",
+            "name": "ageGroup",
+            "title": "Age Group",
+            "isRequired": true,
+            "choices": [
+              "Under 18",
+              "18-24",
+              "25-34",
+              "35-44",
+              "45-54",
+              "55-64",
+              "65 or older"
+            ],
+            "placeholder": "Select your age group"
+          }
+        ]
+      },
+      {
+        "name": "page2",
+        "title": "Test Evaluation",
+        "elements": [
+          {
+            "type": "radiogroup",
+            "name": "satisfactionLevel",
+            "title": "Overall Satisfaction",
+            "isRequired": true,
+            "choices": [
+              "Very Satisfied",
+              "Satisfied",
+              "Neutral",
+              "Dissatisfied",
+              "Very Dissatisfied"
+            ]
+          },
+          {
+            "type": "rating",
+            "name": "experienceRating",
+            "title": "Rate Your Experience",
+            "isRequired": true,
+            "rateMin": 1,
+            "rateMax": 5,
+            "minRateDescription": "Poor",
+            "maxRateDescription": "Excellent"
+          },
+          {
+            "type": "comment",
+            "name": "additionalFeedback",
+            "title": "Additional Feedback",
+            "placeholder": "Provide any additional comments or suggestions"
+          }
+        ]
+      }
+    ],
+    "showProgressBar": "top",
+    "progressBarType": "buttons",
+    "showQuestionNumbers": "off",
+    "completeText": "Submit Form"
+  },
+  "status": "Internal",
+  "tags": [],
+  "isPublic": false,
+  "settings": {
+    "enableWebhook": false,
+    "enableFileUploads": true,
+    "enableCSVExport": true
+  }
+}
