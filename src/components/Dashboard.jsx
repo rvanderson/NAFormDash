@@ -376,7 +376,7 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags, onAvailableT
   useEffect(() => {
     const fetchGeneratedForms = async () => {
       try {
-        const response = await fetch('/api/forms');
+        const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/forms`);
         if (response.ok) {
           const data = await response.json();
           if (data.success && data.forms) {
@@ -493,7 +493,7 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags, onAvailableT
 
   const handleDownloadCSV = async (formId) => {
     try {
-      const response = await fetch(`/api/forms/${formId}/submissions/csv`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/forms/${formId}/submissions/csv`);
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
@@ -520,7 +520,7 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags, onAvailableT
     try {
       console.log(`${newStatus === 'Archived' ? 'Archiving' : 'Unarchiving'} form ${formId}`);
       
-      const response = await fetch(`/api/forms/${formId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/forms/${formId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -559,7 +559,7 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags, onAvailableT
       const currentForm = forms.find(f => f.id === formId);
       const status = isPublic ? 'Public' : (currentForm?.status === 'Archived' ? 'Archived' : 'Internal');
       
-      const response = await fetch(`/api/forms/${formId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/forms/${formId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isPublic, status })
@@ -589,7 +589,7 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags, onAvailableT
     try {
       console.log(`🔧 Frontend sending updates for ${formId}:`, updates);
       
-      const response = await fetch(`/api/forms/${formId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/forms/${formId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updates)

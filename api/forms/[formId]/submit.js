@@ -42,48 +42,19 @@ async function ensureDirectory(dirPath) {
   }
 }
 
-// Update CSV with submission data
-async function updateCSV(formId, submissionData) {
-  const formDir = path.join(process.cwd(), 'server', 'submissions', formId);
-  const csvPath = path.join(formDir, 'responses.csv');
-  
-  await ensureDirectory(formDir);
-  
-  // Add metadata to submission
+// Log submission data (Vercel functions can't write files)
+function logSubmission(formId, submissionData) {
   const enrichedData = {
     submission_id: `${formId}_${Date.now()}`,
     submitted_at: new Date().toISOString(),
     ...submissionData
   };
   
-  // Check if CSV exists
-  let csvExists = false;
-  try {
-    await fs.access(csvPath);
-    csvExists = true;
-  } catch (error) {
-    csvExists = false;
-  }
+  console.log(`📝 Form ${formId} submission:`, JSON.stringify(enrichedData, null, 2));
+  console.log(`✅ Submission logged for form ${formId}`);
   
-  // Create CSV content
-  const headers = Object.keys(enrichedData);
-  const values = headers.map(key => {
-    const value = enrichedData[key];
-    if (typeof value === 'object') {
-      return JSON.stringify(value).replace(/"/g, '""');
-    }
-    return String(value).replace(/"/g, '""');
-  });
-  
-  let csvContent = '';
-  if (!csvExists) {
-    // Add headers if file doesn't exist
-    csvContent += headers.join(',') + '\\n';
-  }
-  csvContent += values.map(v => `"${v}"`).join(',') + '\\n';
-  
-  await fs.appendFile(csvPath, csvContent);
-  console.log(`✅ CSV updated for form ${formId}`);
+  // TODO: In production, save to external database or service
+  // For now, submissions are only logged and sent to webhooks
 }
 
 export default async function handler(req, res) {
@@ -120,8 +91,8 @@ export default async function handler(req, res) {
       }
     }
     
-    // Update CSV with submission data
-    await updateCSV(formId, submissionData);
+    // Log submission data (can't write files in Vercel)
+    logSubmission(formId, submissionData);
     
     // Send webhook if configured
     if (webhookUrl) {

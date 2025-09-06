@@ -26,7 +26,7 @@ const PublicForm = () => {
         setApiHealthy(healthy);
 
         // Fetch form definition by slug
-        const response = await fetch(`/api/forms/slug/${slug}`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/forms/slug/${slug}`);
         
         if (!response.ok) {
           if (response.status === 404) {

@@ -27,7 +27,7 @@ const DynamicForm = () => {
         setApiHealthy(healthy);
 
         // Fetch form definition
-        const response = await fetch(`/api/forms/${formId}/definition`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/forms/${formId}/definition`);
         
         if (!response.ok) {
           if (response.status === 404) {

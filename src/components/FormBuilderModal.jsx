@@ -32,7 +32,7 @@ const FormBuilderModal = ({ isOpen, onClose, onFormGenerated }) => {
     setError(null);
 
     try {
-      const response = await fetch('/api/forms/generate', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/forms/generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -19,22 +19,14 @@ export default async function handler(req, res) {
   }
 
   try {
-    const csvPath = path.join(process.cwd(), 'server', 'submissions', formId, 'responses.csv');
-    
-    try {
-      const csvContent = await fs.readFile(csvPath, 'utf-8');
-      
-      // Set headers for file download
-      res.setHeader('Content-Type', 'text/csv');
-      res.setHeader('Content-Disposition', `attachment; filename="${formId}-responses.csv"`);
-      
-      res.send(csvContent);
-    } catch (error) {
-      res.status(404).json({
-        success: false,
-        error: 'No responses found for this form'
-      });
-    }
+    // Since Vercel functions can't write/read files, return a message
+    // TODO: Integrate with external database or storage service
+    res.status(501).json({
+      success: false,
+      error: 'CSV export not available in serverless environment',
+      message: 'Submissions are logged and sent to webhooks. Consider integrating with a database for CSV exports.',
+      suggestion: 'View submissions in Vercel function logs or set up webhook endpoints to capture form data.'
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
