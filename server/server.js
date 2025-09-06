@@ -893,6 +893,81 @@ app.get('/api/forms/:formId/definition', async (req, res) => {
   }
 });
 
+// Migration endpoint to upload form configurations directly
+app.post('/api/forms/migrate', authenticateToken, [
+  body('id').trim().isLength({ min: 1, max: 50 }).withMessage('Form ID required (1-50 characters)'),
+  body('name').trim().isLength({ min: 1, max: 100 }).withMessage('Form name required (1-100 characters)'),
+  body('formDefinition').isObject().withMessage('Form definition must be an object')
+], handleValidationErrors, async (req, res) => {
+  try {
+    const formConfig = req.body;
+    
+    console.log(`🔄 Migrating form: ${formConfig.name} (${formConfig.id})`);
+    
+    // Validate required fields
+    if (!formConfig.id || !formConfig.name || !formConfig.formDefinition) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields: id, name, formDefinition'
+      });
+    }
+    
+    // Ensure form has proper structure
+    const migratedConfig = {
+      id: formConfig.id,
+      name: formConfig.name,
+      description: formConfig.description || '',
+      urlSlug: formConfig.urlSlug || formConfig.id,
+      webhookUrl: formConfig.webhookUrl || null,
+      createdAt: formConfig.createdAt || new Date().toISOString(),
+      generatedBy: formConfig.generatedBy || 'Migration',
+      formDefinition: formConfig.formDefinition,
+      status: formConfig.status || 'Internal',
+      tags: formConfig.tags || [],
+      isPublic: formConfig.isPublic || false,
+      settings: formConfig.settings || {
+        enableWebhook: !!formConfig.webhookUrl,
+        enableFileUploads: true,
+        enableCSVExport: true
+      }
+    };
+    
+    // Save to forms directory
+    const formPath = path.join(FORMS_DIR, `${formConfig.id}.json`);
+    await fs.writeFile(formPath, JSON.stringify(migratedConfig, null, 2));
+    
+    // Create submissions directory structure if it doesn't exist
+    const formSubmissionDir = path.join(SUBMISSIONS_DIR, formConfig.id);
+    await ensureDirectory(formSubmissionDir);
+    
+    // Create empty CSV file if it doesn't exist
+    const csvPath = path.join(formSubmissionDir, 'responses.csv');
+    try {
+      await fs.access(csvPath);
+    } catch {
+      // File doesn't exist, create empty CSV with headers
+      const csvHeaders = ['Submission ID', 'Timestamp'];
+      await fs.writeFile(csvPath, csvHeaders.join(',') + '\n');
+    }
+    
+    console.log(`✅ Successfully migrated form: ${formConfig.name} (${formConfig.id})`);
+    
+    res.json({
+      success: true,
+      message: 'Form migrated successfully',
+      formId: formConfig.id,
+      formConfig: migratedConfig
+    });
+    
+  } catch (error) {
+    console.error('❌ Form migration error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 // Update form configuration
 app.patch('/api/forms/:formId', authenticateToken, [
   body('title').optional().trim().isLength({ max: 100 }).withMessage('Title too long (max 100 characters)'),
