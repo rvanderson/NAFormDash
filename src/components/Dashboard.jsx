@@ -524,7 +524,7 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags, onAvailableT
     try {
       console.log(`${newStatus === 'Archived' ? 'Archiving' : 'Unarchiving'} form ${formId}`);
       
-      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/forms/${formId}`, {
+      const response = await authenticatedFetch(`${import.meta.env.VITE_API_URL || ''}/api/forms/${formId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -593,7 +593,7 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags, onAvailableT
     try {
       console.log(`🔧 Frontend sending updates for ${formId}:`, updates);
       
-      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/forms/${formId}`, {
+      const response = await authenticatedFetch(`${import.meta.env.VITE_API_URL || ''}/api/forms/${formId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updates)
