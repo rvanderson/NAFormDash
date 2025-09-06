@@ -42,6 +42,11 @@ initializeDataDirectories();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Trust proxy for Railway deployment
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
 // Initialize OpenAI client (gracefully handle missing API key)
 let openai = null;
 if (process.env.OPENAI_API_KEY) {
