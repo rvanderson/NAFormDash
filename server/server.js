@@ -18,6 +18,27 @@ import validator from 'validator';
 dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Data persistence configuration for Railway
+const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, '../data');
+const FORMS_DIR = path.join(DATA_DIR, 'forms');
+const SUBMISSIONS_DIR = path.join(DATA_DIR, 'submissions');
+
+// Ensure data directories exist on startup
+async function initializeDataDirectories() {
+  try {
+    await fs.mkdir(DATA_DIR, { recursive: true });
+    await fs.mkdir(FORMS_DIR, { recursive: true });
+    await fs.mkdir(SUBMISSIONS_DIR, { recursive: true });
+    console.log('📁 Data directories initialized:', { DATA_DIR, FORMS_DIR, SUBMISSIONS_DIR });
+  } catch (error) {
+    console.error('❌ Failed to initialize data directories:', error);
+    process.exit(1);
+  }
+}
+
+// Initialize on startup
+initializeDataDirectories();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -136,11 +157,11 @@ function sanitizeFormId(formId) {
 const storage = multer.diskStorage({
   destination: async (req, file, cb) => {
     const formId = sanitizeFormId(req.body.formId);
-    const uploadsDir = path.join(__dirname, 'submissions', formId, 'uploads');
+    const uploadsDir = path.join(SUBMISSIONS_DIR, formId, 'uploads');
     
     // Verify path is within expected directory to prevent path traversal
     const resolvedPath = path.resolve(uploadsDir);
-    const basePath = path.resolve(__dirname, 'submissions');
+    const basePath = path.resolve(SUBMISSIONS_DIR);
     if (!resolvedPath.startsWith(basePath)) {
       return cb(new Error('Invalid path detected'), false);
     }
@@ -189,7 +210,7 @@ async function ensureDirectory(dirPath) {
 
 // Generate form documentation in Markdown
 async function generateFormDocs(formId, formData, submissionData) {
-  const formDir = path.join(__dirname, 'submissions', formId);
+  const formDir = path.join(SUBMISSIONS_DIR, formId);
   await ensureDirectory(formDir);
 
   // Create .md file with form structure
@@ -229,7 +250,7 @@ ${Object.entries(submissionData).map(([key, value]) => `
 
 // Generate form JSON
 async function generateFormJSON(formId, formData) {
-  const formDir = path.join(__dirname, 'submissions', formId);
+  const formDir = path.join(SUBMISSIONS_DIR, formId);
   await ensureDirectory(formDir);
   
   await fs.writeFile(
@@ -240,7 +261,7 @@ async function generateFormJSON(formId, formData) {
 
 // Update CSV with submission data
 async function updateCSV(formId, submissionData) {
-  const formDir = path.join(__dirname, 'submissions', formId);
+  const formDir = path.join(SUBMISSIONS_DIR, formId);
   const csvPath = path.join(formDir, 'responses.csv');
   
   await ensureDirectory(formDir);
@@ -524,7 +545,7 @@ Generate a complete SurveyJS form definition that captures all the necessary inf
     };
 
     // Save to the consolidated forms directory
-    const formsDir = path.join(__dirname, 'forms');
+    const formsDir = FORMS_DIR;
     await ensureDirectory(formsDir);
     await fs.writeFile(
       path.join(formsDir, `${formId}.json`),
@@ -532,7 +553,7 @@ Generate a complete SurveyJS form definition that captures all the necessary inf
     );
 
     // Create the submission directory structure
-    const submissionsDir = path.join(__dirname, 'submissions');
+    const submissionsDir = SUBMISSIONS_DIR;
     const formSubmissionDir = path.join(submissionsDir, formId);
     await ensureDirectory(formSubmissionDir);
 
@@ -642,7 +663,7 @@ app.post('/api/forms/:formId/submit', upload.any(), async (req, res) => {
 app.get('/api/forms/:formId/submissions', authenticateToken, async (req, res) => {
   try {
     const { formId } = req.params;
-    const csvPath = path.join(__dirname, 'submissions', formId, 'responses.csv');
+    const csvPath = path.join(SUBMISSIONS_DIR, formId, 'responses.csv');
     
     try {
       const csvContent = await fs.readFile(csvPath, 'utf-8');
@@ -673,7 +694,7 @@ app.get('/api/forms/:formId/submissions', authenticateToken, async (req, res) =>
 app.get('/api/forms/:formId/submissions/csv', authenticateToken, async (req, res) => {
   try {
     const { formId } = req.params;
-    const csvPath = path.join(__dirname, 'submissions', formId, 'responses.csv');
+    const csvPath = path.join(SUBMISSIONS_DIR, formId, 'responses.csv');
     
     try {
       const csvContent = await fs.readFile(csvPath, 'utf-8');
@@ -775,8 +796,8 @@ app.get('/api/health', (req, res) => {
 // Get all forms and their submission counts
 app.get('/api/forms', async (req, res) => {
   try {
-    const formsDir = path.join(__dirname, 'forms');
-    const submissionsDir = path.join(__dirname, 'submissions');
+    const formsDir = FORMS_DIR;
+    const submissionsDir = SUBMISSIONS_DIR;
 
     try {
       const formFiles = await fs.readdir(formsDir);
@@ -841,7 +862,7 @@ app.get('/api/forms', async (req, res) => {
 app.get('/api/forms/:formId/definition', async (req, res) => {
   try {
     const { formId } = req.params;
-    const formsDir = path.join(__dirname, 'forms'); // Use the new consolidated directory
+    const formsDir = FORMS_DIR;
     const formPath = path.join(formsDir, `${formId}.json`);
     
     try {
@@ -879,7 +900,7 @@ app.patch('/api/forms/:formId', authenticateToken, [
     const updates = req.body;
     
     console.log(`🔧 Updating form ${formId} with:`, JSON.stringify(updates, null, 2));
-    const formsDir = path.join(__dirname, 'forms');
+    const formsDir = FORMS_DIR;
     const formPath = path.join(formsDir, `${formId}.json`);
     
     try {
@@ -954,7 +975,7 @@ app.patch('/api/forms/:formId', authenticateToken, [
 app.get('/api/forms/slug/:slug', async (req, res) => {
   try {
     const { slug } = req.params;
-    const formsDir = path.join(__dirname, 'forms');
+    const formsDir = FORMS_DIR;
     
     // Read all form files to find matching slug
     try {
@@ -1050,7 +1071,7 @@ app.post('/api/webhook/test', webhookLimiter, [
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 NAFormDashboard API Server running on port ${PORT}`);
-  console.log(`📁 Submissions will be stored in: ${path.join(__dirname, 'submissions')}`);
+  console.log(`📁 Submissions will be stored in: ${SUBMISSIONS_DIR}`);
   console.log(`🔗 Health check: http://localhost:${PORT}/api/health`);
 });
 
