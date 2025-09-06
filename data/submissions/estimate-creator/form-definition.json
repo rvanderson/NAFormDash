@@ -1,0 +1,83 @@
+{
+  "title": "Estimate Creator",
+  "description": "Use this form to create a detailed estimate for your project.",
+  "pages": [
+    {
+      "name": "clientInfo",
+      "elements": [
+        {
+          "type": "text",
+          "name": "clientName",
+          "title": "Client Name",
+          "isRequired": true,
+          "placeholder": "Enter the client's full name"
+        }
+      ],
+      "title": "Client Information"
+    },
+    {
+      "name": "projectDetails",
+      "elements": [
+        {
+          "type": "text",
+          "name": "projectName",
+          "title": "Project Name",
+          "isRequired": true,
+          "placeholder": "Enter the project name"
+        },
+        {
+          "type": "comment",
+          "name": "projectDescription",
+          "title": "Description of Project",
+          "isRequired": true,
+          "placeholder": "Provide a detailed description of the project"
+        }
+      ],
+      "title": "Project Details"
+    },
+    {
+      "name": "deliverablesCosts",
+      "elements": [
+        {
+          "type": "matrixdynamic",
+          "name": "deliverables",
+          "title": "Description of Deliverables with Costs",
+          "isRequired": true,
+          "columns": [
+            {
+              "name": "deliverableDescription",
+              "title": "Deliverable Description",
+              "cellType": "text",
+              "isRequired": true,
+              "placeholder": "Describe the deliverable"
+            },
+            {
+              "name": "cost",
+              "title": "Cost",
+              "cellType": "text",
+              "isRequired": true,
+              "validators": [
+                {
+                  "type": "numeric",
+                  "text": "Please enter a valid cost",
+                  "minValue": 0
+                }
+              ],
+              "inputType": "number",
+              "placeholder": "Enter the cost"
+            }
+          ],
+          "addRowText": "Add another deliverable",
+          "removeRowText": "Remove deliverable"
+        }
+      ],
+      "title": "Deliverables and Costs"
+    }
+  ],
+  "showProgressBar": true,
+  "progressBarLocation": "top",
+  "progressBarType": "buttons",
+  "progressBarShowPageTitles": true,
+  "checkErrorsMode": "onNext",
+  "completeText": "Submit Form"
+}
