@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import FormBuilderModal from './FormBuilderModal.jsx';
 import Toast from './Toast.jsx';
 
 const Header = ({ searchQuery, onSearchChange, viewMode, onViewModeChange, filters, onFiltersChange, availableTags, onTagsChange }) => {
+  const { isAuthenticated, logout } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [newTagName, setNewTagName] = useState('');
@@ -127,16 +129,30 @@ const Header = ({ searchQuery, onSearchChange, viewMode, onViewModeChange, filte
               <h1 className="text-2xl @sm:text-3xl font-display font-semibold text-gray-900">Form Dashboard</h1>
               <p className="text-gray-600 mt-1 @sm:text-lg">Manage and create forms for your design projects</p>
             </div>
-            <button 
-              onClick={() => setIsModalOpen(true)}
-              className="btn-primary flex items-center gap-2 @sm:px-6 @sm:py-3"
-            >
-              <svg className="w-4 h-4 @sm:w-5 @sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-              </svg>
-              <span className="hidden @sm:inline">Create New Form</span>
-              <span className="@sm:hidden">Create</span>
-            </button>
+            <div className="flex items-center gap-2">
+              {isAuthenticated && (
+                <button 
+                  onClick={logout}
+                  className="btn-secondary flex items-center gap-2 px-3 py-2 text-sm"
+                  title="Logout"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  <span className="hidden @md:inline">Logout</span>
+                </button>
+              )}
+              <button 
+                onClick={() => setIsModalOpen(true)}
+                className="btn-primary flex items-center gap-2 @sm:px-6 @sm:py-3"
+              >
+                <svg className="w-4 h-4 @sm:w-5 @sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                </svg>
+                <span className="hidden @sm:inline">Create New Form</span>
+                <span className="@sm:hidden">Create</span>
+              </button>
+            </div>
           </div>
           
           <div className="flex items-center justify-between @container">
