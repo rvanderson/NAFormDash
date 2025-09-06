@@ -760,7 +760,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // Get all forms and their submission counts
-app.get('/api/forms', authenticateToken, async (req, res) => {
+app.get('/api/forms', async (req, res) => {
   try {
     const formsDir = path.join(__dirname, 'forms');
     const submissionsDir = path.join(__dirname, 'submissions');
@@ -825,7 +825,7 @@ app.get('/api/forms', authenticateToken, async (req, res) => {
 });
 
 // Get form definition by ID
-app.get('/api/forms/:formId/definition', authenticateToken, async (req, res) => {
+app.get('/api/forms/:formId/definition', async (req, res) => {
   try {
     const { formId } = req.params;
     const formsDir = path.join(__dirname, 'forms'); // Use the new consolidated directory
