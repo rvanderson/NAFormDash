@@ -15,14 +15,35 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load token from localStorage on mount
+  // Load and validate token from localStorage on mount
   useEffect(() => {
-    const savedToken = localStorage.getItem('naform_auth_token');
-    if (savedToken) {
-      setToken(savedToken);
-      setIsAuthenticated(true);
-    }
-    setIsLoading(false);
+    const validateToken = async () => {
+      const savedToken = localStorage.getItem('naform_auth_token');
+      if (savedToken) {
+        try {
+          // Test the token with a simple authenticated request
+          const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/auth/validate`, {
+            headers: {
+              'Authorization': `Bearer ${savedToken}`,
+            },
+          });
+          
+          if (response.ok) {
+            setToken(savedToken);
+            setIsAuthenticated(true);
+          } else {
+            // Token is invalid, clear it
+            localStorage.removeItem('naform_auth_token');
+          }
+        } catch (error) {
+          console.error('Token validation failed:', error);
+          localStorage.removeItem('naform_auth_token');
+        }
+      }
+      setIsLoading(false);
+    };
+    
+    validateToken();
   }, []);
 
   const login = async (username, password) => {

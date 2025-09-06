@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import LoginModal from './LoginModal';
 
 const FormCard = ({ title, description, status, responses, date, path, generatedBy, onEdit, onArchive, onTogglePublic, onDownloadCSV, formId, isPublic, urlSlug }) => {
   const navigate = useNavigate();
@@ -369,11 +368,10 @@ const FormListItem = ({ title, description, status, responses, date, path, gener
 };
 
 const Dashboard = ({ searchQuery, viewMode, filters, availableTags, onAvailableTagsChange }) => {
-  const { authenticatedFetch, isAuthenticated } = useAuth();
+  const { authenticatedFetch } = useAuth();
   const [forms, setForms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingForm, setEditingForm] = useState(null);
-  const [showLoginModal, setShowLoginModal] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -496,11 +494,6 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags, onAvailableT
   };
 
   const handleDownloadCSV = async (formId) => {
-    if (!isAuthenticated) {
-      setShowLoginModal(true);
-      return;
-    }
-
     try {
       const response = await authenticatedFetch(`${import.meta.env.VITE_API_URL || ''}/api/forms/${formId}/submissions/csv`);
       if (response.ok) {
@@ -563,11 +556,6 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags, onAvailableT
   };
 
   const handleTogglePublic = async (formId, isPublic) => {
-    if (!isAuthenticated) {
-      setShowLoginModal(true);
-      return;
-    }
-
     try {
       console.log(`${isPublic ? 'Making public' : 'Making internal'} form ${formId}`);
       
@@ -753,13 +741,6 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags, onAvailableT
           availableTags={availableTags}
         />
       )}
-      
-      {/* Login Modal */}
-      <LoginModal
-        isOpen={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-        onSuccess={() => setShowLoginModal(false)}
-      />
     </div>
   );
 };

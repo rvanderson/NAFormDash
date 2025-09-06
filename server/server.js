@@ -744,6 +744,19 @@ app.post('/api/auth/login', [
   }
 });
 
+// Validate authentication token
+app.get('/api/auth/validate', authenticateToken, async (req, res) => {
+  // If we get here, the token is valid (authenticateToken middleware passed)
+  res.json({
+    success: true,
+    message: 'Token is valid',
+    user: {
+      id: 'admin', // In a real app, this would come from the token
+      username: process.env.ADMIN_USERNAME || 'admin'
+    }
+  });
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ 
