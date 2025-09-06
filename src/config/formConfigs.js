@@ -51,6 +51,13 @@ export const API_CONFIG = {
   }
 };
 
+// Debug: Log the resolved API URL in development
+if (import.meta.env.DEV) {
+  console.log('🔧 API Configuration Debug:');
+  console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
+  console.log('Resolved baseURL:', API_CONFIG.baseURL);
+}
+
 // Helper function to get form config
 export const getFormConfig = (formId) => {
   return FORM_CONFIGS[formId] || {
