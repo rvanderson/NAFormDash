@@ -196,7 +196,7 @@ const DynamicForm = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <button 
-                  onClick={() => window.history.back()}
+                  onClick={() => navigate(-1)}
                   className="p-2 @sm:p-3 text-gray-400 hover:text-brand-600 hover:bg-surface-tertiary rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-brand-500/20"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
