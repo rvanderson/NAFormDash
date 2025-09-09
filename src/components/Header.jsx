@@ -133,7 +133,7 @@ const Header = ({ searchQuery, onSearchChange, viewMode, onViewModeChange, filte
               {isAuthenticated && (
                 <button 
                   onClick={logout}
-                  className="btn-secondary flex items-center gap-2 px-3 py-2 text-sm"
+                  className="btn-secondary flex items-center gap-2 @sm:px-6 @sm:py-3"
                   title="Logout"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
