@@ -9,6 +9,7 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags, onAvailableT
   const [forms, setForms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingForm, setEditingForm] = useState(null);
+  const [returnUrl, setReturnUrl] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -81,11 +82,13 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags, onAvailableT
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const editFormId = urlParams.get('edit');
+    const returnTo = urlParams.get('returnTo');
 
     if (editFormId && forms.length > 0 && !editingForm) {
       const formToEdit = forms.find(form => form.id === editFormId);
       if (formToEdit) {
         setEditingForm(formToEdit);
+        setReturnUrl(returnTo);
         // Clear the URL parameter after opening the modal using React Router
         navigate('/', { replace: true });
       }
@@ -229,6 +232,12 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags, onAvailableT
           }
         } : f));
         setEditingForm(null);
+        setReturnUrl(null);
+        
+        // Navigate to return URL if provided
+        if (returnUrl) {
+          navigate(returnUrl);
+        }
       } else {
         throw new Error('Update failed');
       }
@@ -308,7 +317,13 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags, onAvailableT
         <EditFormModal
           form={editingForm}
           onSave={handleUpdateForm}
-          onClose={() => setEditingForm(null)}
+          onClose={() => {
+            setEditingForm(null);
+            setReturnUrl(null);
+            if (returnUrl) {
+              navigate(returnUrl);
+            }
+          }}
           availableTags={availableTags}
         />
       )}
@@ -458,13 +473,13 @@ const EditFormModal = ({ form, onSave, onClose, availableTags = [] }) => {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-border rounded-lg text-gray-700 hover:bg-surface-secondary"
+              className="flex-1 btn-md btn-secondary"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700"
+              className="flex-1 btn-md btn-primary"
             >
               Save Changes
             </button>

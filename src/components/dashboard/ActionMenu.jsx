@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const ActionMenu = ({
   formId,
@@ -13,6 +14,7 @@ const ActionMenu = ({
 }) => {
   const [showActions, setShowActions] = useState(false);
   const actionsRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -66,6 +68,24 @@ const ActionMenu = ({
                 />
               </svg>
               Edit Form
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/forms/${formId}/edit-content`);
+                setShowActions(false);
+              }}
+              className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-surface-secondary"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                />
+              </svg>
+              Edit Content
             </button>
             <button
               onClick={(e) => {

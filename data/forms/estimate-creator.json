@@ -21,13 +21,7 @@
             "title": "Client Name",
             "isRequired": true,
             "placeholder": "Enter the client's full name"
-          }
-        ]
-      },
-      {
-        "name": "projectDetails",
-        "title": "Project Details",
-        "elements": [
+          },
           {
             "type": "text",
             "name": "projectName",
@@ -35,19 +29,6 @@
             "isRequired": true,
             "placeholder": "Enter the project name"
           },
-          {
-            "type": "comment",
-            "name": "projectDescription",
-            "title": "Description of Project",
-            "isRequired": true,
-            "placeholder": "Provide a detailed description of the project"
-          }
-        ]
-      },
-      {
-        "name": "deliverablesCosts",
-        "title": "Deliverables and Costs",
-        "elements": [
           {
             "type": "matrixdynamic",
             "name": "deliverables",
@@ -95,7 +76,7 @@
     "enableCSVExport": true
   },
   "urlSlug": "estimate-creator",
-  "updatedAt": "2025-09-04T03:36:17.361Z",
+  "updatedAt": "2025-09-10T15:11:41.781Z",
   "status": "Internal",
   "tags": [
     "finance"

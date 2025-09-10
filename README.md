@@ -5,13 +5,16 @@ A modern, responsive form management dashboard built with React, Vite, and Tailw
 ## ✨ Features
 
 - **📊 Dashboard Overview**: Visual grid/list layout displaying all forms with status indicators and search
-- **🤖 AI Form Builder**: GPT-5 powered intelligent form generation from natural language descriptions
-- **📝 Dynamic Forms**: SurveyJS-powered forms with conditional logic and multi-step wizards  
-- **🎨 Modern Design System**: Built with Tailwind CSS v4 using custom design tokens
+- **🤖 AI Form Builder**: GPT-4o powered intelligent form generation from natural language descriptions
+- **📝 Dynamic Forms**: SurveyJS-powered forms with conditional logic and multi-step wizards
+- **✏️ Form Content Editor**: Advanced JSON editor with real-time validation and error checking
+- **🧭 Smart Navigation**: Context-aware routing that remembers where you came from
+- **🎨 Modern Design System**: Built with Tailwind CSS v4 using custom design tokens and OKLCH colors
 - **📱 Responsive Design**: Container queries for true responsive components
 - **🔌 Webhook Integration**: Real-time form submission notifications
 - **💾 Auto Data Export**: CSV export and file upload handling
 - **⚡ Performance Optimized**: Vite build system with hot module replacement
+- **🔒 Authentication System**: JWT-based secure access with configurable credentials
 
 ## 🛠️ Tech Stack
 
@@ -79,9 +82,14 @@ npm start        # Start production API server
 ├── src/                 # Frontend React application
 │   ├── components/      # Reusable UI components
 │   │   ├── Dashboard.jsx        # Main dashboard with form grid/list view
+│   │   ├── FormContentEditor.jsx # JSON form content editor with validation
 │   │   ├── Header.jsx           # Navigation header with search
 │   │   ├── FormBuilderModal.jsx # AI-powered form creation modal
-│   │   └── Toast.jsx           # Success/error notifications
+│   │   ├── LoginPage.jsx        # Authentication interface
+│   │   └── dashboard/           # Dashboard-specific components
+│   │       ├── FormCard.jsx     # Grid view form cards
+│   │       ├── FormList.jsx     # List view form rows
+│   │       └── ActionMenu.jsx   # Form action dropdown menu
 │   ├── config/          # Configuration files
 │   │   └── formConfigs.js      # Form configurations and API settings
 │   ├── services/        # API and business logic
@@ -162,10 +170,17 @@ npm start        # Start production API server
 
 ### AI Form Builder
 - **Natural Language Input**: Describe your form in plain English
-- **GPT-5 Integration**: Intelligent form generation with proper field types
+- **GPT-4o Integration**: Intelligent form generation with proper field types
 - **Webhook Configuration**: Optional webhook URL setup during creation
 - **Form Validation**: Built-in validation and error handling
 - **Real-time Preview**: Instant form generation and preview
+
+### Form Content Editor
+- **JSON Editing**: Direct editing of SurveyJS form definitions
+- **Real-time Validation**: Comprehensive JSON syntax and structure validation
+- **Error Prevention**: Detailed error messages prevent form breakage
+- **Context-Aware Navigation**: Smart routing that returns you to your starting point
+- **Visual Error Feedback**: Clear validation errors with specific location information
 
 ### Dynamic Forms
 - **SurveyJS Engine**: Powerful form rendering with conditional logic
@@ -208,10 +223,15 @@ server/
 
 ### API Endpoints
 - `POST /api/forms/generate` - Generate new form with AI
+- `GET /api/forms` - Get all forms with metadata
 - `GET /api/forms/:formId/definition` - Get form definition
+- `PATCH /api/forms/:formId` - Update form metadata or content
 - `POST /api/forms/:formId/submit` - Submit form data
 - `GET /api/forms/:formId/submissions` - Get submission stats
+- `GET /api/forms/:formId/submissions/csv` - Download CSV export
 - `POST /api/webhook/test` - Test webhook functionality
+- `POST /api/auth/login` - User authentication
+- `GET /api/auth/validate` - Validate authentication token
 - `GET /api/health` - Server health check
 
 ### Webhook Configuration
@@ -250,6 +270,58 @@ Create forms using natural language with the AI form builder:
 - **Edge**: 111+
 
 *Note: Tailwind CSS v4 requires modern browsers for OKLCH color support and container queries.*
+
+## 🧭 Navigation System
+
+### Smart Context-Aware Routing
+The application features intelligent navigation that remembers where you came from:
+
+**From Dashboard:**
+- Edit Form → Returns to Dashboard
+- Edit Content → Returns to Dashboard
+
+**From Form Page:**
+- Edit Form → Returns to Form Page
+- Edit Content → Returns to Form Page
+- Back Button → Always goes to Dashboard
+
+### Route Structure
+```
+/ (Dashboard)
+├── ?edit={formId}&returnTo={path}    # Edit form metadata with context
+├── /forms/{formId}                   # Form detail/submission page
+├── /forms/{formId}/edit-content      # JSON content editor
+│   └── ?returnTo={path}              # Smart return navigation
+└── /f/{slug}                         # Public form submission (slug-based)
+```
+
+### Button Standardization
+All buttons use consistent styling classes:
+- **Primary Actions**: `btn-primary` (blue background)
+- **Secondary Actions**: `btn-secondary` (white background, blue text)
+- **Sizes**: `btn-sm` (small), `btn-md` (medium)
+- **Additional Variants**: `btn-brand`, `btn-neutral`, `btn-ghost`
+
+## 🔧 Form Content Editing
+
+### JSON Validation Features
+The form content editor includes comprehensive validation:
+
+**Syntax Validation:**
+- Real-time JSON parsing
+- Detailed syntax error messages
+- Line-specific error reporting
+
+**Structure Validation:**
+- Required SurveyJS properties check
+- Page and element validation
+- Type checking for all properties
+- Detailed error aggregation
+
+**Visual Feedback:**
+- Error highlighting in textarea
+- Comprehensive error messages with icons
+- Prevention of form-breaking changes
 
 ## 🤝 Contributing
 

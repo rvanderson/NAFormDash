@@ -42,7 +42,7 @@ export const FORM_CONFIGS = {
 
 // API Configuration
 export const API_CONFIG = {
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL: import.meta.env.VITE_API_URL || '',
   endpoints: {
     submitForm: (formId) => `/api/forms/${formId}/submit`,
     getSubmissions: (formId) => `/api/forms/${formId}/submissions`,

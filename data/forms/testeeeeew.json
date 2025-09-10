@@ -34,12 +34,13 @@
     "showQuestionNumbers": "off",
     "completeText": "Submit Form"
   },
-  "status": "Internal",
+  "status": "Archived",
   "tags": [],
   "isPublic": false,
   "settings": {
     "enableWebhook": false,
     "enableFileUploads": true,
     "enableCSVExport": true
-  }
+  },
+  "updatedAt": "2025-09-10T14:14:05.944Z"
 }

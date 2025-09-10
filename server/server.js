@@ -1025,6 +1025,11 @@ app.patch('/api/forms/:formId', authenticateToken, [
         updatedConfig.formDefinition.completeText = updates.completeText;
       }
       
+      // Allow complete form definition replacement
+      if (updates.formDefinition) {
+        updatedConfig.formDefinition = updates.formDefinition;
+      }
+      
       // Update last modified timestamp
       updatedConfig.updatedAt = new Date().toISOString();
       

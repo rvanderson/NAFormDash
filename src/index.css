@@ -102,6 +102,75 @@
   }
 }
 
+/* Button size variants */
+@utility btn-sm {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all 0.2s ease-in-out;
+  
+  &:focus {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
+  }
+}
+
+@utility btn-md {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all 0.2s ease-in-out;
+  
+  &:focus {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
+  }
+}
+
+/* Button style variants */
+@utility btn-brand {
+  background-color: var(--color-brand-50);
+  color: var(--color-brand-700);
+  border: 1px solid var(--color-brand-200);
+  
+  &:hover {
+    background-color: var(--color-brand-100);
+    border-color: var(--color-brand-300);
+  }
+}
+
+@utility btn-neutral {
+  background-color: oklch(0.98 0.005 240);
+  color: oklch(0.4 0.02 240);
+  border: 1px solid oklch(0.88 0.02 240);
+  
+  &:hover {
+    background-color: oklch(0.96 0.01 240);
+    border-color: oklch(0.82 0.03 240);
+  }
+}
+
+@utility btn-ghost {
+  background-color: transparent;
+  color: oklch(0.4 0.02 240);
+  border: 1px solid transparent;
+  
+  &:hover {
+    background-color: oklch(0.96 0.01 240);
+    border-color: oklch(0.88 0.02 240);
+  }
+}
+
 @utility status-badge {
   display: inline-flex;
   align-items: center;

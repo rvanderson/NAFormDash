@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import LoginPage from './components/LoginPage';
 import Header from './components/Header';
 import Dashboard from './components/Dashboard';
+import FormContentEditor from './components/FormContentEditor';
 import DynamicForm from './forms/DynamicForm';
 import PublicForm from './forms/PublicForm';
 
@@ -62,6 +63,9 @@ const AppRouter = () => {
         <Route path="/f/:slug" element={<PublicForm />} />
         
         {/* Admin routes - require authentication */}
+        <Route path="/forms/:formId/edit-content" element={
+          isAuthenticated ? <FormContentEditor /> : <LoginPage />
+        } />
         <Route path="/forms/:formId" element={
           isAuthenticated ? <DynamicForm /> : <LoginPage />
         } />
