@@ -4,6 +4,7 @@ import { Model } from 'survey-core';
 import { Survey } from 'survey-react-ui';
 import { FlatLight } from 'survey-core/themes';
 import { FormSubmissionService } from '../services/formSubmissionService.js';
+import logger from '../utils/logger.js';
 
 const DynamicForm = () => {
   const { formId } = useParams();
@@ -95,7 +96,7 @@ const DynamicForm = () => {
       const result = await submissionService.submitForm(sender.data, sender);
       
       if (result.success) {
-        console.log("✅ Generated form submitted successfully:", result);
+        logger.info("✅ Generated form submitted successfully:", result);
         
         // Show success message
         sender.completedHtml = `

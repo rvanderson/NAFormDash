@@ -4,6 +4,7 @@ import { Model } from 'survey-core';
 import { Survey } from 'survey-react-ui';
 import { FlatLight } from 'survey-core/themes';
 import { FormSubmissionService } from '../services/formSubmissionService.js';
+import logger from '../utils/logger.js';
 
 const PublicForm = () => {
   const { slug } = useParams();
@@ -99,7 +100,7 @@ const PublicForm = () => {
       const result = await submissionService.submitForm(sender.data, sender);
       
       if (result.success) {
-        console.log("✅ Public form submitted successfully:", result);
+        logger.info("✅ Public form submitted successfully:", result);
         
         // Show success message
         sender.completedHtml = `

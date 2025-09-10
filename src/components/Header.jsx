@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import FormBuilderModal from './FormBuilderModal.jsx';
 import Toast from './Toast.jsx';
+import logger from '../utils/logger.js';
 
 const Header = ({ searchQuery, onSearchChange, viewMode, onViewModeChange, filters, onFiltersChange, availableTags, onTagsChange }) => {
   const { isAuthenticated, logout } = useAuth();
@@ -26,7 +27,7 @@ const Header = ({ searchQuery, onSearchChange, viewMode, onViewModeChange, filte
   }, [isFilterOpen]);
 
   const handleFormGenerated = (result) => {
-    console.log('Form generated successfully:', result);
+    logger.info('Form generated successfully:', result);
     // Show success toast
     setToast({
       message: `Form "${result.formName}" generated successfully! 🎉`,
