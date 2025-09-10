@@ -1,5 +1,6 @@
 // Form Submission Service
 import { getFormConfig, getAPIUrl, API_CONFIG } from '../config/formConfigs.js';
+import logger from '../utils/logger.js';
 
 export class FormSubmissionService {
   constructor(formId) {
@@ -10,7 +11,7 @@ export class FormSubmissionService {
   // Submit form data with files and webhook
   async submitForm(formData, surveyModel) {
     try {
-      console.log('📤 Submitting form:', this.formId, formData);
+      logger.info('📤 Submitting form:', this.formId, formData);
 
       // Prepare submission data
       const submissionData = new FormData();
@@ -52,7 +53,7 @@ export class FormSubmissionService {
       const result = await response.json();
 
       if (result.success) {
-        console.log('✅ Form submitted successfully:', result);
+        logger.info('✅ Form submitted successfully:', result);
         return {
           success: true,
           submissionId: result.submissionId,
