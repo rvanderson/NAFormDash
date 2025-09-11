@@ -17,7 +17,7 @@ const FormContentEditor = () => {
   useEffect(() => {
     const fetchForm = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/forms/${formId}/definition`);
+        const response = await authenticatedFetch(`${import.meta.env.VITE_API_URL || ''}/api/forms/${formId}/definition`);
         if (response.ok) {
           const data = await response.json();
           if (data.success && data.formConfig) {
@@ -276,8 +276,8 @@ const FormContentEditor = () => {
                       setError('');
                     }
                   }}
-                  className={`w-full h-96 p-4 border rounded-lg font-mono text-sm focus:ring-brand-500 focus:border-brand-500 ${
-                    error ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-gray-300'
+                  className={`textarea-base h-96 font-mono text-sm ${
+                    error ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
                   }`}
                   placeholder="Enter form definition JSON..."
                 />

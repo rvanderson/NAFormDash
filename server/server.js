@@ -972,8 +972,18 @@ app.post('/api/forms/migrate', authenticateToken, [
 app.patch('/api/forms/:formId', authenticateToken, [
   body('title').optional().trim().isLength({ max: 100 }).withMessage('Title too long (max 100 characters)'),
   body('description').optional().trim().isLength({ max: 1000 }).withMessage('Description too long (max 1000 characters)'),
-  body('webhookUrl').optional().isURL().withMessage('Invalid webhook URL'),
-  body('urlSlug').optional().trim().matches(/^[a-z0-9-]+$/).withMessage('URL slug must contain only lowercase letters, numbers, and hyphens')
+    body('webhookUrl').optional().custom(value => {
+    if (value === '' || validator.isURL(value)) {
+      return true;
+    }
+    throw new Error('Invalid webhook URL');
+  }),
+    body('urlSlug').optional().trim().custom(value => {
+    if (value === '' || /^[a-z0-9-]+$/.test(value)) {
+      return true;
+    }
+    throw new Error('URL slug must contain only lowercase letters, numbers, and hyphens');
+  })
 ], handleValidationErrors, async (req, res) => {
   try {
     const { formId } = req.params;

@@ -198,23 +198,28 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags, onAvailableT
     }
   };
 
-  const handleUpdateForm = async (formId, formData) => {
+    const handleUpdateForm = async (formId, formData) => {
     try {
+      const originalForm = forms.find(f => f.id === formId);
+      const updatedFormDefinition = {
+        ...originalForm.formDefinition,
+        completeText: formData.completeText
+      };
+
+      const payload = {
+        name: formData.title,
+        description: formData.description,
+        isPublic: formData.isPublic,
+        tags: formData.tags,
+        urlSlug: formData.urlSlug || '',
+        webhookUrl: formData.webhookUrl || '',
+        formDefinition: updatedFormDefinition
+      };
+
       const response = await authenticatedFetch(`${import.meta.env.VITE_API_URL || ''}/api/forms/${formId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: formData.title,
-          description: formData.description,
-          isPublic: formData.isPublic,
-          tags: formData.tags,
-          urlSlug: formData.urlSlug,
-          webhookUrl: formData.webhookUrl,
-          formDefinition: {
-            ...forms.find(f => f.id === formId).formDefinition,
-            completeText: formData.completeText
-          }
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
@@ -239,11 +244,13 @@ const Dashboard = ({ searchQuery, viewMode, filters, availableTags, onAvailableT
           navigate(returnUrl);
         }
       } else {
-        throw new Error('Update failed');
+        const errorData = await response.json().catch(() => ({ error: `Update failed with status: ${response.status}` }));
+        console.error('Server error details:', errorData);
+        throw new Error(errorData.error || 'Update failed');
       }
     } catch (error) {
       console.error('Error updating form:', error);
-      alert('Error updating form. Please try again.');
+      alert(`Error updating form: ${error.message}. Check console for details.`);
     }
   };
 
@@ -441,7 +448,13 @@ const EditFormModal = ({ form, onSave, onClose, availableTags = [] }) => {
               <input
                 type="text"
                 value={formData.urlSlug}
-                onChange={(e) => setFormData({ ...formData, urlSlug: e.target.value })}
+                onChange={(e) => {
+                  const formattedSlug = e.target.value
+                    .toLowerCase()
+                    .replace(/\s+/g, '-')
+                    .replace(/[^a-z0-9-]/g, '');
+                  setFormData({ ...formData, urlSlug: formattedSlug });
+                }}
                 className="input-base flex-1 rounded-none rounded-r-md"
                 placeholder="form-slug"
               />
